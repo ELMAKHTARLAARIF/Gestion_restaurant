@@ -7,6 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class MenuCategory extends Model
 {
-    /** @use HasFactory<\Database\Factories\MenuCategoryFactory> */
     use HasFactory;
+
+    protected $table = 'MenuCategory';
+
+    protected $fillable = [
+        'name',
+    ];
+
+    public function menuItems()
+    {
+        return $this->hasMany(MenuItem::class, 'category_id');
+    }
 }

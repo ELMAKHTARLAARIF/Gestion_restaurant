@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reservations', function (Blueprint $table) {
+        Schema::create('ContactMessage', function (Blueprint $table) {
             $table->id();
-            $table->date('reservationDate');
-            $table->integer('numberOfPeaple');
-            $table->enum('status',['confirmed','cancled']);
-            $table->integer('tableNumber');
-            $table->foreignId('client_id');
+            $table->string('Message_Content');
+            $table->foreignId('Order_id')->constrained('Order');
+            $table->foreignId('Item_id')->constrained('MenuItem');
+            $table->foreignId('user_id')->constrained('users');
+            
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reservations');
+        Schema::dropIfExists('ContactMessage');
     }
 };

@@ -155,7 +155,7 @@
         <!-- Logo -->
         <div class="flex items-center gap-3 px-6 py-7 border-b border-gold/[.12]">
             <div class="w-8 h-8 border border-gold/40 flex items-center justify-center text-[11px] text-gold flex-shrink-0">LM</div>
-            <span class="hide-collapsed font-display text-xl text-gold tracking-wide whitespace-nowrap">La Maison</span>
+            <span class="hide-collapsed font-display text-xl text-gold tracking-wide whitespace-nowrap">Snack Yassine</span>
         </div>
 
         <!-- Nav -->
@@ -176,10 +176,6 @@
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap flex-1">Commandes</span>
                 <span class="nav-badge hide-collapsed bg-gold text-dark text-[9px] font-semibold px-1.5 py-0.5">3</span>
             </a>
-            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="setPage('menu',this)">
-                <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">📋</span>
-                <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Menu</span>
-            </a>
             <a href="{{route('AddItem')}}">
                 <div class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="window.location.href='add-item.html'">
                     <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">＋</span>
@@ -192,19 +188,23 @@
             </a>
 
             <div class="nav-label-text mt-4 px-6 pb-2 text-[9px] tracking-[.3em] uppercase text-cream/20 whitespace-nowrap transition-opacity">Gestion</div>
-            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="setPage('clients',this)">
+            <a href="{{route('show_items')}}" class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" >
+                <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">📋</span>
+                <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Menu</span>
+            </a>
+            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" >
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">👤</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Clients</span>
             </a>
-            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="setPage('staff',this)">
+            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" >
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">👥</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Personnel</span>
             </a>
-            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="setPage('analytics',this)">
+            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" >
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">📊</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Analytique</span>
             </a>
-            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="setPage('settings',this)">
+            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">⚙</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Paramètres</span>
             </a>
