@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin | La Maison</title>
     <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ asset('css/Dashboard.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
     <script>
@@ -36,112 +37,7 @@
             }
         }
     </script>
-    <style>
-        html,
-        body {
-            height: 100%;
-            overflow: hidden;
-        }
 
-        body {
-            font-family: 'Jost', sans-serif;
-        }
-
-        .sidebar-w {
-            width: 240px;
-            min-width: 240px;
-            transition: width .3s, min-width .3s;
-        }
-
-        .sidebar-w.collapsed {
-            width: 64px;
-            min-width: 64px;
-        }
-
-        .sidebar-w.collapsed .hide-collapsed {
-            opacity: 0;
-            width: 0;
-            overflow: hidden;
-            transition: opacity .2s;
-        }
-
-        .sidebar-w.collapsed .nav-badge {
-            opacity: 0;
-        }
-
-        .sidebar-w.collapsed .nav-label-text {
-            opacity: 0;
-        }
-
-        .content-scroll::-webkit-scrollbar {
-            width: 3px;
-        }
-
-        .content-scroll::-webkit-scrollbar-thumb {
-            background: rgba(200, 169, 110, .15);
-        }
-
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(16px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .fade-up {
-            animation: fadeUp .45s ease forwards;
-            opacity: 0;
-        }
-
-        .fade-up:nth-child(1) {
-            animation-delay: .05s;
-        }
-
-        .fade-up:nth-child(2) {
-            animation-delay: .12s;
-        }
-
-        .fade-up:nth-child(3) {
-            animation-delay: .19s;
-        }
-
-        .fade-up:nth-child(4) {
-            animation-delay: .26s;
-        }
-
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #C8A96E;
-            transition: width .4s;
-        }
-
-        .stat-card:hover::after {
-            width: 100%;
-        }
-
-        .table-cell-item {
-            transition: all .2s;
-        }
-
-        .notif-panel {
-            transform: translateX(100%);
-            transition: transform .3s;
-        }
-
-        .notif-panel.open {
-            transform: translateX(0);
-        }
-    </style>
 </head>
 
 <body class="bg-dark text-cream font-body flex" style="font-size:14px;">
