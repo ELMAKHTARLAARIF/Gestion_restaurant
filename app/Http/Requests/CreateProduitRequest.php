@@ -1,5 +1,8 @@
 <?php
-class CreateProduitRequest
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
+
+class CreateProduitRequest extends FormRequest
 {
     public static function handle($request)
     {

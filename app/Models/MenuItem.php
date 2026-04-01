@@ -32,4 +32,9 @@ class MenuItem extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'order_menu_item', 'menu_item_id', 'order_id')->withPivot('quantity');
+    }
 }

@@ -15,7 +15,7 @@
       <!-- ── Desktop nav ── -->
       <nav class="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
 
-        <a href="#top" class="nav-link text-[11px] tracking-[.16em] uppercase text-cream/60 hover:text-cream px-4 py-2 transition-colors no-underline">Accueil</a>
+        <a href="{{ route('home') }}" class="nav-link text-[11px] tracking-[.16em] uppercase text-cream/60 hover:text-cream px-4 py-2 transition-colors no-underline">Accueil</a>
         <a href="#about" class="nav-link text-[11px] tracking-[.16em] uppercase text-cream/60 hover:text-cream px-4 py-2 transition-colors no-underline">Notre Histoire</a>
 
         <!-- Carte dropdown -->
@@ -62,13 +62,13 @@
       <!-- ── CTA buttons ── -->
       <div class="hidden md:flex items-center gap-3">
         <!-- Order -->
-        <button onclick="openDrawer()" class="relative flex items-center gap-2 px-5 py-[10px] border border-gold/35 text-[11px] tracking-[.14em] uppercase text-cream hover:border-gold hover:text-gold transition-all bg-transparent cursor-pointer">
+        <button class="relative flex items-center gap-2 px-5 py-[10px] border border-gold/35 text-[11px] tracking-[.14em] uppercase text-cream hover:border-gold hover:text-gold transition-all bg-transparent cursor-pointer">
           🍽 Commander
           <span id="badge" class="badge-pulse hidden absolute -top-1.5 -right-1.5 w-5 h-5 bg-gold text-dark text-[9px] font-bold rounded-full items-center justify-center">0</span>
         </button>
         <!-- Reserve -->
-        <button onclick="openRes()" class="flex items-center gap-2 px-5 py-[10px] bg-gold text-dark text-[11px] tracking-[.14em] uppercase font-semibold hover:bg-gold-h transition-all border-0 cursor-pointer">
-          🗓 Réserver
+        <button class="flex items-center gap-2 px-5 py-[10px] bg-gold text-dark text-[11px] tracking-[.14em] uppercase font-semibold hover:bg-gold-h transition-all border-0 cursor-pointer">
+          <a href="{{ route('reservation') }}" class="text-cream no-underline">🗓 Réserver</a>
         </button>
       </div>
 

@@ -1,18 +1,38 @@
 <?php
+
 namespace App\Http\Requests;
 
-class CreateReservationRequest {
+use Illuminate\Foundation\Http\FormRequest;
 
-public static function handle($request){
-        $validateData = $request->validate([
-        'item_id'     =>'required|int',
-        'name'        => 'required|string|max:255',
-        'lastNmae'    => 'required|string|max:255',
-        'telephone'       => 'required|string|max:255',
-        'reservationDate' => 'required|date',
-        'Hour' => 'required|time',
-        'numberOfPeaple' => 'required|int|max:6|min:1',
-        ]);
-        return $validateData;
-}
+class CreateReservationRequest extends FormRequest
+{
+        protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+        {
+                dd($validator->errors()->all());
+        }
+        public function authorize(): bool
+        {
+                return true;
+        }
+
+        public function rules(): array
+        {
+                return [
+                        'name'            => 'required|string|max:255',
+                        'lastName'        => 'required|string|max:255',
+                        'telephone'       => 'required|string|max:20',
+                        'reservationDate' => 'required|date|after_or_equal:today',
+                        'Hour'            => 'required|string',
+                        'numberOfPeaple'  => 'required|integer|min:1|max:8',
+                        'tableNumber'     => 'required|integer|min:1|max:10',
+                ];
+        }
+
+        public function messages(): array
+        {
+                return [
+                        'reservationDate.after_or_equal' => 'The reservation date must be today or in the future.',
+                        'numberOfPeaple.max'             => 'For more than 8 guests, please contact us directly.',
+                ];
+        }
 }

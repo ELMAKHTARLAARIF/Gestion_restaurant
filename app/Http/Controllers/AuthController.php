@@ -2,27 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SignupRequest;
 use App\Models\User;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Role;
-class AuthCOntroller extends Controller
+
+
+class AuthController extends Controller
 {
-    public function store(Request $request)
+    public function store(SignupRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'lastName' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'nullable|string|max:20',
-            'password' => 'required|min:8|confirmed',
-        ]);
-
-        $role = Role::where('name', 'client')->first();
-
-        $userCreate = User::create([
+        dd($request->phone);
+        $role = Role::where('name', 'customer')->first();
+        $user = User::create([
             'name' => $request->name,
             'lastName' => $request->lastName,
             'email' => $request->email,
@@ -31,11 +26,11 @@ class AuthCOntroller extends Controller
             'role_id' => $role->id
         ]);
 
-        if (!$userCreate) {
-            return redirect()->back()->with('error', 'failed signing');
+        if ($user) {
+            return redirect()->route('login')->with('success', 'Compte créé avec succès');
+        } else {
+            return redirect()->back()->with('error', 'Failed signing');
         }
-
-        return redirect()->route('login')->with('success', 'Compte créé avec succès');
     }
 
     public function login(Request $request)
@@ -46,10 +41,9 @@ class AuthCOntroller extends Controller
         ]);
 
         if (Auth::attempt($credentials, $request->remember)) {
-
             $request->session()->regenerate();
 
-            return redirect()->route('dashboard');
+            return redirect()->route('home');
         }
 
         return back()->withErrors([

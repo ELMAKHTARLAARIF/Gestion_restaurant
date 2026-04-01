@@ -116,7 +116,6 @@ window.toast = function (icon, title, sub) {
     t.classList.remove('translate-y-0', 'opacity-100');
   }, 3200);
 };
-// for reservation form submiting 
 
 // Toast helper
 function showToast(message) {
@@ -128,4 +127,5 @@ function showToast(message) {
         toast.classList.add('-translate-y-20','opacity-0');
     }, 3000);
 }
+///////////////////////////////////////////////
 

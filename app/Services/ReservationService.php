@@ -1,30 +1,56 @@
 <?php
 
+namespace App\Services;
+
 use App\Models\Reservation;
 use App\Models\User;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Validation\Rules\Date as RulesDate;
-use Symfony\Component\VarDumper\Cloner\Data;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ReservationService
 {
-
-    public static function Reservation($data)
+    /**
+     * @param  array $data  — validated data array from CreateReservationRequest
+     * @return array        — ['success' => bool, 'message' => string]
+     */
+    public static function Store(array $data): array
     {
-        $customer = User::where('phone', $data->telephone);
-        $isAviable = Reservation::where('tableNumber',$data->tableNumber)->where('reservationDate',$data->reservationDate)->where('Hour',$data->Hour);
-        if($isAviable){
-            return 'error: this table is not Aviable in this time please chose another time';
+        // 1. Check date is not in the past (belt-and-suspenders beyond form validation)
+        $reservationDate = Carbon::parse($data['reservationDate']);
+        if ($reservationDate->startOfDay()->lt(Carbon::today())) {
+            return ['success' => false, 'message' => 'Reservation date cannot be in the past.'];
         }
-        if ($customer && !$isAviable) {
-            if ($data->date < new Date) {
-                try {
-                    Reservation::created($data);
-                    return 'success: Reservation Success';
-                } catch (\Throwable $th) {
-                    return 'error: Reservation Failed Try Again';
-                }
-            }
+
+        // 2. Check table availability  — fixed: missing ->exists() caused the bug
+        //    (a query builder object is always truthy without ->exists())
+        $isAvailable = !Reservation::where('tableNumber',     $data['tableNumber'])
+            ->where('reservationDate', $data['reservationDate'])
+            ->where('Hour',            $data['Hour'])
+            ->exists();
+
+        if (!$isAvailable) {
+            return ['success' => false, 'message' => 'This table is not available at the selected time. Please choose another time.'];
         }
+
+        // 3. Create the reservation  — fixed: Reservation::created() → Reservation::create()
+        $customer = User::where('phone', $data['telephone'])->first();
+        if (!$customer) {
+            return ['success' => false, 'message' => 'No user found with the provided phone number. Please register first.'];
+        }
+        $reservation = Reservation::create([
+            'customer_id'     => $customer->id,
+            'reservationDate' => $data['reservationDate'],
+            'Hour'            => $data['Hour'],
+            'numberOfPeaple'  => $data['numberOfPeaple'],
+            'tableNumber'     => $data['tableNumber'],
+            'status'          => 'pending',
+        ]);
+
+        return [
+            'success' => true,
+            'message' => 'Reservation successful!',
+            'reservation' => $reservation 
+        ];
     }
 }

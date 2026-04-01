@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>La Maison | Restaurant Gastronomique</title>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
@@ -165,7 +166,7 @@
     <a href="#">Galerie</a>
     <a href="#">Contact</a>
   </div>
-  <a href="reservation.html" class="nav-cta">Réserver</a>
+  <a onclick="openRes()" class="nav-cta">Réserver</a>
   <div class="hamburger">
     <span></span><span></span><span></span>
   </div>
@@ -180,7 +181,7 @@
     <div class="hero-divider"></div>
     <p class="hero-sub">Une expérience culinaire d'exception, au cœur de la ville</p>
     <div class="hero-btns">
-      <a href="reservation.html" class="btn-primary">Réserver une table</a>
+      <a onclick="openRes()" class="btn-primary">Réserver une table</a>
       <a href="#menu" class="btn-ghost">Découvrir le menu</a>
     </div>
   </div>
@@ -376,19 +377,6 @@
     </div>
   </div>
 </footer>
-
-<script>
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-    });
-  });
-  window.addEventListener('scroll', () => {
-    const nav = document.querySelector('nav');
-    if (window.scrollY > 60) nav.style.background = 'rgba(13,13,13,0.97)';
-    else nav.style.background = 'linear-gradient(to bottom, rgba(13,13,13,0.95), transparent)';
-  });
-</script>
+<!-- Reservation Modal -->
 </body>
 </html>

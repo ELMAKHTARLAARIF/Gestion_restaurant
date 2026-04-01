@@ -509,23 +509,7 @@
     <!-- RIGHT PANEL -->
     <div class="right-panel">
         <!-- Steps -->
-        <div class="steps">
-            <div class="step">
-                <div class="step-circle active" id="s1">1</div>
-                <span class="step-label active">Compte</span>
-            </div>
-            <div class="step-line"></div>
-            <div class="step">
-                <div class="step-circle" id="s2">2</div>
-                <span class="step-label">Préférences</span>
-            </div>
-            <div class="step-line"></div>
-            <div class="step">
-                <div class="step-circle" id="s3">3</div>
-                <span class="step-label">Confirmation</span>
-            </div>
-        </div>
-
+        @include('Component.HandleMessages')
         <!-- FORM -->
         <div id="formContent">
             @error('email')

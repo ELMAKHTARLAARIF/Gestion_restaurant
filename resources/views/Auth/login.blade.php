@@ -399,7 +399,7 @@
       <div class="input-group">
         <label class="input-label">Adresse email</label>
         <div class="input-wrap">
-          <input type="email" class="input-field" id="email" placeholder="vous@exemple.com" />
+          <input type="email" class="input-field" id="email" name="email" placeholder="vous@exemple.com" />
         </div>
         <span class="error-msg" id="email-error">Veuillez entrer un email valide.</span>
       </div>
@@ -407,7 +407,7 @@
       <div class="input-group">
         <label class="input-label">Mot de passe</label>
         <div class="input-wrap">
-          <input type="password" class="input-field" id="password" placeholder="••••••••" />
+          <input type="password" class="input-field" id="password" name="password" placeholder="••••••••" />
           <span class="input-icon" id="togglePwd">👁</span>
         </div>
         <span class="error-msg" id="pwd-error">Le mot de passe est requis.</span>

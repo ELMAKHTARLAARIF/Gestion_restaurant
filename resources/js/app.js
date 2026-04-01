@@ -1,3 +1,3 @@
 import './bootstrap';
-import '../css/homeStyle.css';
 import './home.js';
+import '/reservation';

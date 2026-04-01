@@ -13,11 +13,14 @@ return new class extends Migration
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('lastName');
+            $table->string('telephone');
             $table->date('reservationDate');
+            $table->time('Hour');
             $table->integer('numberOfPeaple');
-            $table->enum('status',['confirmed','cancled']);
             $table->integer('tableNumber');
-            $table->foreignId('client_id');
+            $table->enum('status',['confirmed','cancelled'])->default('confirmed');
             $table->timestamps();
         });
     }
