@@ -16,7 +16,7 @@
       </div>
 
       <!-- Grid -->
-      <form  id="menuGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gold/[.07]" method="POST">
+      <form action="{{route('order')}}"  id="menuGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gold/[.07]" method="POST">
         @csrf
         @foreach($items as $item)
         <div class="mc relative bg-s1 flex flex-col overflow-hidden group cursor-pointer" data-cat="plats">

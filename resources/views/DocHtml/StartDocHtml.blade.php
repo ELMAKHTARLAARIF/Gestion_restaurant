@@ -7,7 +7,8 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Snack YAssine | Restaurant Gastronomique</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  @vite(['resources/css/app.css', 'resources/js/app.js'])
+  <link href="{{ asset('css/homeStyle.css') }}" rel="stylesheet">
+  <script src="{{asset('js/home.js')}}" defer></script>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <script>
     tailwind.config = {

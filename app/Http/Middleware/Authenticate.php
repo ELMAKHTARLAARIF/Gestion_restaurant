@@ -4,22 +4,20 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class Authenticate
 {
-    // public function handle(Request $request, Closure $next)
-    // {
-    //     if (!auth()->check()) {
+    public function handle(Request $request, Closure $next)
+    {
+        if (!Auth::check()) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Unauthenticated'], 401);
+            }
 
-    //         // If request expects JSON (API)
-    //         if ($request->expectsJson()) {
-    //             return response()->json(['message' => 'Unauthenticated'], 401);
-    //         }
+            return redirect('/');
+        }
 
-    //         // Redirect for web
-    //         return redirect('/login');
-    //     }
-
-    //     return $next($request);
-    // }
+        return $next($request);
+    }
 }

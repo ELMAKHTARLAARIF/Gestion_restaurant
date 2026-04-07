@@ -191,7 +191,7 @@
           <div class="h-px bg-gold/[.08]"></div>
 
           <!-- ── Optional Pre-Order Section ── -->
-          <div>
+          <!-- <div>
             <div class="flex items-center justify-between mb-3">
               <div>
                 <div class="text-[9px] tracking-[.2em] uppercase text-cream/25 mb-1">Optionnel</div>
@@ -204,7 +204,7 @@
               </button>
             </div>
             <p class="text-[11px] text-cream/25">Sélectionnez vos plats à l'avance — nous les préparerons pour votre arrivée.</p>
-          </div>
+          </div> -->
 
 
           <div id="orderSection" style="display:none;" class="bg-s2 border border-gold/[.08] p-5">
@@ -291,168 +291,3 @@
 </main>
 @include('Component.footer')
 @include('DocHtml.EndDocHtml')
-
-<script>
-  let cart = {};
-  let total = 0;
-
-  /* ── Toggle order section ── */
-  function toggleOrderSection() {
-    let sec = document.getElementById('orderSection');
-    let icon = document.getElementById('toggleIcon');
-    let lbl = document.getElementById('toggleLabel');
-
-    if (sec.style.display === 'none') {
-      sec.style.display = 'block';
-      icon.textContent = '−';
-      lbl.textContent = 'Retirer la commande';
-    } else {
-      sec.style.display = 'none';
-      icon.textContent = '+';
-      lbl.textContent = 'Ajouter une commande';
-
-      cart = {};
-      updateCart();
-    }
-  }
-
-  /* ── Category tabs ── */
-  function showCat(cat) {
-    ['entrees', 'plats', 'desserts'].forEach(c => {
-      let panel = document.getElementById('cat-' + c);
-      let tab = document.getElementById('tab-' + c);
-
-      if (c === cat) {
-        panel.style.display = 'flex';
-        tab.style.color = '#C8A96E';
-        tab.style.borderBottomColor = '#C8A96E';
-      } else {
-        panel.style.display = 'none';
-        tab.style.color = 'rgba(240,234,214,.35)';
-        tab.style.borderBottomColor = 'transparent';
-      }
-    });
-  }
-
-  /* ── Add item ── */
-  document.addEventListener('click', function(e) {
-    let btn = e.target.closest('.btn-add-item');
-    if (!btn) return;
-
-    let id = btn.dataset.id;
-    let name = btn.dataset.name;
-    let price = parseFloat(btn.dataset.price);
-
-    if (cart[id]) {
-      cart[id].quantity++;
-    } else {
-      cart[id] = {
-        id,
-        name,
-        price,
-        quantity: 1
-      };
-    }
-
-    updateCart();
-  });
-
-  /* ── Change quantity ── */
-  function changeQty(id, delta) {
-    if (!cart[id]) return;
-
-    cart[id].quantity += delta;
-
-    if (cart[id].quantity <= 0) {
-      delete cart[id];
-    }
-
-    updateCart();
-  }
-
-  /* ── Render cart ── */
-  function renderCart() {
-    let container = document.getElementById('cartItems');
-    container.innerHTML = '';
-
-    Object.values(cart).forEach(item => {
-      let div = document.createElement('div');
-
-      div.style.display = 'flex';
-      div.style.justifyContent = 'space-between';
-      div.style.alignItems = 'center';
-      div.style.borderBottom = '1px solid rgba(200,169,110,.05)';
-      div.style.padding = '8px 0';
-
-      div.innerHTML = `
-      <div>
-        <div style="font-size:13px; color:#F0EAD6;">${item.name}</div>
-        <div style="font-size:11px; color:rgba(240,234,214,.4);">
-          ${item.price} MAD × ${item.quantity}
-        </div>
-      </div>
-
-      <div style="display:flex; align-items:center; gap:8px;">
-        <button onclick="changeQty('${item.id}', -1)"
-          style="width:24px;height:24px;border:1px solid #C8A96E;color:#C8A96E;background:none;cursor:pointer;">−</button>
-
-        <span style="font-size:12px;color:#C8A96E;">${item.quantity}</span>
-
-        <button onclick="changeQty('${item.id}', 1)"
-          style="width:24px;height:24px;border:1px solid #C8A96E;color:#C8A96E;background:none;cursor:pointer;">+</button>
-      </div>
-    `;
-
-      container.appendChild(div);
-    });
-  }
-
-  /* ── Calculate total ── */
-  function calculateTotal() {
-    total = 0;
-
-    Object.values(cart).forEach(item => {
-      total += item.price * item.quantity;
-    });
-
-    document.getElementById('grandTotal').innerText =
-      total.toFixed(2) + ' MAD';
-  }
-
-  /* ── Send to Laravel ── */
-  function updateHiddenInput() {
-    document.getElementById('preOrderData').value =
-      JSON.stringify(cart);
-  }
-
-  /* ── Show cart ── */
-  function toggleCartSummary() {
-    let box = document.getElementById('cartSummary');
-
-    if (Object.keys(cart).length > 0) {
-      box.style.display = 'block';
-    } else {
-      box.style.display = 'none';
-    }
-  }
-
-  /* ── Update button ── */
-  function updateSubmitBtn() {
-    let btn = document.getElementById('submitBtn');
-
-    if (Object.keys(cart).length > 0) {
-      btn.textContent = 'Confirmer la réservation & la commande';
-    } else {
-      btn.textContent = 'Confirmer la réservation';
-    }
-  }
-
-  /* ── Global update ── */
-  function updateCart() {
-    renderCart();
-    calculateTotal();
-    updateHiddenInput();
-    toggleCartSummary();
-    updateSubmitBtn();
-  }
-</script>

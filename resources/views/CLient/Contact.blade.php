@@ -38,10 +38,13 @@
         <span class="block text-[10px] tracking-[.4em] uppercase text-gold mb-4">Message</span>
         <h2 class="font-display font-light mb-8" style="font-size:clamp(2rem,4vw,2.8rem)">Écrivez-<em class="italic text-gold">nous</em></h2>
         <div class="flex flex-col gap-3">
-          <input type="text" placeholder="Votre nom" class="fld bg-s1 border border-gold/[.12] px-5 py-3.5 text-[13px] text-cream placeholder-cream/20 font-body transition-colors" />
-          <input type="email" placeholder="Votre email" class="fld bg-s1 border border-gold/[.12] px-5 py-3.5 text-[13px] text-cream placeholder-cream/20 font-body transition-colors" />
-          <textarea rows="4" placeholder="Votre message…" class="fld bg-s1 border border-gold/[.12] px-5 py-3.5 text-[13px] text-cream placeholder-cream/20 font-body resize-none transition-colors"></textarea>
-          <button class="py-4 bg-gold text-dark text-[11px] tracking-[.18em] uppercase font-semibold hover:bg-gold-h transition-all border-0 cursor-pointer">Envoyer le message</button>
+          <form action="{{ route('contact') }}" method="POST">
+            @csrf
+            <input type="text" placeholder="Votre nom" name="name" class="fld bg-s1 border border-gold/[.12] px-5 py-3.5 text-[13px] text-cream placeholder-cream/20 font-body transition-colors" />
+            <input type="email" placeholder="Votre email" name="email" class="fld bg-s1 border border-gold/[.12] px-5 py-3.5 text-[13px] text-cream placeholder-cream/20 font-body transition-colors" />
+            <textarea rows="4" placeholder="Votre message…" name="message" class="fld bg-s1 border border-gold/[.12] px-5 py-3.5 text-[13px] text-cream placeholder-cream/20 font-body resize-none transition-colors"></textarea>
+            <button type="submit" class="py-4 bg-gold text-dark text-[11px] tracking-[.18em] uppercase font-semibold hover:bg-gold-h transition-all border-0 cursor-pointer">Envoyer le message</button>
+          </form>
         </div>
       </div>
     </div>

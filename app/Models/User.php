@@ -50,7 +50,7 @@ class User extends Authenticatable
     }
     public function role()
     {
-        return $this->belongsTo(Role::class, 'roles_id');
+        return $this->belongsTo(Role::class, 'role_id');
     }
     public function Order(){
         return $this->hasMany(Order::class,'order_id');

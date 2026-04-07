@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin | La Maison</title>
     <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="{{ asset('css/Dashboard.css') }}">
+    <link href="{{ asset('css/Dashboard.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/Dashboard.js') }}" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
     <script>
@@ -62,7 +63,7 @@
                 <span class="w-5 text-center text-gold text-base flex-shrink-0">⊞</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-gold whitespace-nowrap">Tableau de bord</span>
             </a>
-            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="setPage('reservations',this)">
+            <a href="{{route('admin.reservations')}}" class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="setPage('reservations',this)">
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">🗓</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap flex-1">Réservations</span>
                 <span class="nav-badge hide-collapsed bg-gold text-dark text-[9px] font-semibold px-1.5 py-0.5">8</span>
@@ -84,19 +85,19 @@
             </a>
 
             <div class="nav-label-text mt-4 px-6 pb-2 text-[9px] tracking-[.3em] uppercase text-cream/20 whitespace-nowrap transition-opacity">Gestion</div>
-            <a href="{{route('show_items')}}" class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" >
+            <a href="{{route('show_items')}}" class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">📋</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Menu</span>
             </a>
-            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" >
+            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">👤</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Clients</span>
             </a>
-            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" >
+            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">👥</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Personnel</span>
             </a>
-            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" >
+            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">📊</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Analytique</span>
             </a>
@@ -130,11 +131,19 @@
             </div>
             <!-- Actions -->
             <div class="flex items-center gap-2">
+                @php
+                 $pendingCount = \App\Models\Reservation::where('status', 'pending')->count() 
+                @endphp
                 <button onclick="toggleNotif()" class="relative w-9 h-9 border border-gold/[.12] flex items-center justify-center text-cream/40 hover:border-gold/35 hover:text-gold transition-all text-sm">
-                    🔔<span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-gold rounded-full"></span>
+                    🔔
+                    @if($pendingCount > 0)
+                    <span class="absolute top-1.5 right-1.5 w-3 h-3 bg-gold rounded-full flex items-center justify-center text-[10px] text-black font-bold">
+                        {{ $pendingCount }}
+                    </span>
+                    @endif
                 </button>
                 <button onclick="toggleFS()" class="w-9 h-9 border border-gold/[.12] flex items-center justify-center text-cream/40 hover:border-gold/35 hover:text-gold transition-all text-sm">⛶</button>
-                <button onclick="window.location.href='login.html'" class="w-9 h-9 border border-gold/[.12] flex items-center justify-center text-cream/40 hover:border-gold/35 hover:text-gold transition-all text-sm">⏻</button>
+                <a href="{{ route('logout') }}" rel="noopener noreferrer" class="w-9 h-9 border border-gold/[.12] flex items-center justify-center text-cream/40 hover:border-gold/35 hover:text-gold transition-all text-sm">⏻</a>
             </div>
             <div id="topDate" class="text-[11px] text-cream/35 pl-3 border-l border-gold/[.1]"></div>
         </header>

@@ -1,116 +1,276 @@
-      document.getElementById('topDate').textContent = new Date().toLocaleDateString('fr-FR', {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long'
-        });
+document.addEventListener('DOMContentLoaded', function () {
 
-        let collapsed = false;
+  // ─────────────────────────────
+  // 📅 Date
+  // ─────────────────────────────
+  const topDate = document.getElementById('topDate');
+  if (topDate) {
+    topDate.textContent = new Date().toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long'
+    });
+  }
 
-        function toggleSidebar() {
-            collapsed = !collapsed;
-            document.getElementById('sidebar').classList.toggle('collapsed', collapsed);
-            document.getElementById('collapseBtn').textContent = collapsed ? '▶' : '◀';
+  // ─────────────────────────────
+  // 📌 Sidebar collapse
+  // ─────────────────────────────
+  let collapsed = false;
+
+  window.toggleSidebar = function () {
+    collapsed = !collapsed;
+
+    document.getElementById('sidebar')
+      ?.classList.toggle('collapsed', collapsed);
+
+    const btn = document.getElementById('collapseBtn');
+    if (btn) btn.textContent = collapsed ? '▶' : '◀';
+  };
+
+  // ─────────────────────────────
+  // 📄 Page switching
+  // ─────────────────────────────
+  const titles = {
+    dashboard:    'Tableau de <em class="italic text-gold">bord</em>',
+    reservations: 'Réser<em class="italic text-gold">vations</em>',
+    orders:       'Com<em class="italic text-gold">mandes</em>',
+    menu:         'Menu & <em class="italic text-gold">Carte</em>',
+    tables:       '<em class="italic text-gold">Tables</em>',
+    clients:      '<em class="italic text-gold">Clients</em>',
+    staff:        'Person<em class="italic text-gold">nel</em>',
+    analytics:    '<em class="italic text-gold">Analytique</em>',
+    settings:     'Para<em class="italic text-gold">mètres</em>',
+  };
+
+  window.setPage = function (name, el) {
+    document.querySelectorAll('.nav-item').forEach(i => {
+      i.classList.remove('active', 'border-gold', 'bg-gold/[.08]');
+      i.classList.add('border-transparent');
+
+      i.querySelectorAll('span').forEach(s => {
+        s.classList.remove('text-gold');
+        s.classList.add('text-cream/45');
+      });
+    });
+
+    el.classList.add('active', 'border-gold', 'bg-gold/[.08]');
+    el.classList.remove('border-transparent');
+
+    el.querySelectorAll('span').forEach(s => {
+      if (!s.classList.contains('nav-badge')) {
+        s.classList.add('text-gold');
+        s.classList.remove('text-cream/45');
+      }
+    });
+
+    const pageTitle = document.getElementById('pageTitle');
+    if (pageTitle) pageTitle.innerHTML = titles[name] || name;
+  };
+
+  // ─────────────────────────────
+  // 🔔 Notifications panel (FIXED)
+  // ─────────────────────────────
+  const notifPanel = document.getElementById('notifPanel');
+
+  window.toggleNotif = function () {
+    notifPanel?.classList.toggle('hidden');
+  };
+
+  // Close when clicking outside
+  document.addEventListener('click', function (e) {
+    if (!notifPanel) return;
+
+    const isClickInside = notifPanel.contains(e.target);
+    const isButton = e.target.closest('[onclick="toggleNotif()"]');
+
+    if (!isClickInside && !isButton) {
+      notifPanel.classList.add('hidden');
+    }
+  });
+
+  // Prevent closing when clicking inside panel
+  notifPanel?.addEventListener('click', function (e) {
+    e.stopPropagation();
+  });
+
+  // ─────────────────────────────
+  // 🖥 Fullscreen
+  // ─────────────────────────────
+  window.toggleFS = function () {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
+  // ─────────────────────────────
+  // 🪑 Tables grid
+  // ─────────────────────────────
+  const tablesGrid = document.getElementById('tablesGrid');
+
+  if (tablesGrid) {
+    const states = [
+      'occupied','occupied','free','reserved','occupied','free',
+      'free','occupied','reserved','free','occupied','occupied',
+      'reserved','free','free','occupied','free','reserved',
+      'occupied','free','occupied','reserved','free','free'
+    ];
+
+    const seats = [
+      2,4,2,4,6,2,4,4,2,6,4,2,
+      4,2,4,6,2,4,4,2,4,2,6,4
+    ];
+
+    const colorMap = {
+      occupied: 'border-gold/35 bg-gold/[.08] text-gold',
+      reserved: 'border-cblue/35 bg-cblue/[.08] text-cblue',
+      free:     'border-cgreen/20 bg-cgreen/[.05] text-cgreen',
+    };
+
+    const stateArr = [...states];
+
+    states.forEach((s, i) => {
+      const el = document.createElement('div');
+
+      el.className = `
+        aspect-square border flex flex-col items-center justify-center
+        gap-0.5 cursor-pointer transition-all ${colorMap[s]}
+      `;
+
+      el.innerHTML = `
+        <div class="font-display text-sm">${i + 1}</div>
+        <div class="text-[9px] text-cream/35">${seats[i]}p</div>
+      `;
+
+      el.addEventListener('click', () => {
+        const order = ['free', 'occupied', 'reserved'];
+
+        stateArr[i] = order[(order.indexOf(stateArr[i]) + 1) % 3];
+
+        el.className = `
+          aspect-square border flex flex-col items-center justify-center
+          gap-0.5 cursor-pointer transition-all ${colorMap[stateArr[i]]}
+        `;
+      });
+
+      tablesGrid.appendChild(el);
+    });
+  }
+
+  // ─────────────────────────────
+  // 📊 Revenue chart
+  // ─────────────────────────────
+  const revenueCanvas = document.getElementById('revenueChart');
+
+  if (revenueCanvas && typeof Chart !== 'undefined') {
+    new Chart(revenueCanvas.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Auj'],
+        datasets: [{
+          data: [6200, 7100, 5800, 8400, 9200, 11500, 8420],
+          backgroundColor: (ctx) =>
+            ctx.dataIndex === 6
+              ? 'rgba(200,169,110,.85)'
+              : 'rgba(200,169,110,.16)',
+          borderColor: 'rgba(200,169,110,.4)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+
+  // ─────────────────────────────
+  // 🍩 Donut chart
+  // ─────────────────────────────
+  const donutCanvas = document.getElementById('donutChart');
+
+  if (donutCanvas && typeof Chart !== 'undefined') {
+    new Chart(donutCanvas.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: [54, 28, 18],
+          backgroundColor: [
+            'rgba(200,169,110,.8)',
+            'rgba(110,158,200,.8)',
+            'rgba(110,200,138,.8)'
+          ],
+          borderWidth: 2
+        }]
+      },
+      options: {
+        cutout: '70%',
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+
+});
+/////
+
+// add produit
+
+    const d = new Date();
+    document.getElementById('topDate').textContent = d.toLocaleDateString('fr-FR', { weekday:'short', day:'2-digit', month:'long' });
+
+    // Live preview
+    function updatePreview() {
+        const name  = document.getElementById('itemName').value;
+        const cat   = document.getElementById('itemCat').selectedOptions[0]?.text || 'Catégorie';
+        const desc  = document.getElementById('itemDesc').value;
+        const price = document.getElementById('itemPrice').value;
+        const time  = document.getElementById('itemTime').value;
+
+        document.getElementById('prevName').textContent  = name  || 'Nom du plat';
+        document.getElementById('prevName').style.color  = name  ? '#F5F0E8' : 'rgba(245,240,232,.4)';
+        document.getElementById('prevCat').textContent   = cat !== 'Sélectionner…' ? cat : 'Catégorie';
+        document.getElementById('prevDesc').textContent  = desc  || 'Description du plat…';
+        document.getElementById('prevPrice').innerHTML   = price ? `${parseInt(price).toLocaleString('fr-FR')} <span style="font-size:.8rem;color:rgba(245,240,232,.3);">MAD</span>` : `— <span style="font-size:.8rem;color:rgba(245,240,232,.2);">MAD</span>`;
+        document.getElementById('prevPrice').style.color = price ? '#C8A96E' : 'rgba(200,169,110,.4)';
+        document.getElementById('prevTime').textContent  = time  ? `⏱ ${time} min` : '⏱ — min';
+    }
+
+    function updateChar() {
+        const len = document.getElementById('itemDesc').value.length;
+        document.getElementById('charCount').textContent = `${len} / 200`;
+    }
+
+    // Image handling
+    function handleFile(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById('imagePreview').src = e.target.result;
+            document.getElementById('imgName').textContent = file.name;
+            document.getElementById('imgSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+            const wrap = document.getElementById('imagePreviewWrap');
+            wrap.style.display = 'flex';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        document.getElementById('dropZone').classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            document.getElementById('fileInput').files = dt.files;
+            handleFile(document.getElementById('fileInput'));
         }
+    }
 
-        // Char count
-        document.getElementById('itemDesc').addEventListener('input', function() {
-            document.getElementById('charCount').textContent = `${this.value.length} / 200`;
-        });
-
-        // Tag toggle
-        function toggleTag(el) {
-            el.classList.toggle('selected');
-        }
-
-        function toggleSeason(el) {
-            el.classList.toggle('selected');
-            el.classList.toggle('border-gold/50');
-            el.classList.toggle('bg-gold/10');
-            el.classList.toggle('text-gold');
-            el.classList.toggle('text-cream/40');
-            el.classList.toggle('border-gold/[.12]');
-        }
-
-        // Live preview
-        function updatePreview() {
-            const name = document.getElementById('itemName').value;
-            const desc = document.getElementById('itemDesc').value;
-            const price = document.getElementById('itemPrice').value;
-            const cat = document.getElementById('itemCat').value;
-
-            const pName = document.getElementById('prev-name');
-            const pDesc = document.getElementById('prev-desc');
-            const pPrice = document.getElementById('prev-price');
-            const pCat = document.getElementById('prev-cat');
-
-            pName.textContent = name || 'Nom du plat…';
-            pName.className = `font-display text-lg mb-2 ${name ? 'text-cream' : 'text-cream/30 italic'}`;
-            pDesc.textContent = desc ? (desc.length > 80 ? desc.substring(0, 80) + '…' : desc) : 'Description apparaîtra ici…';
-            pDesc.className = `text-[11px] leading-relaxed mb-4 ${desc ? 'text-cream/60' : 'text-cream/25'}`;
-            pPrice.textContent = price ? `${parseInt(price).toLocaleString('fr-FR')} MAD` : '— MAD';
-            pPrice.className = `font-display text-xl ${price ? 'text-gold' : 'text-gold/40'}`;
-            pCat.textContent = cat || 'Catégorie';
-        }
-
-        // Ingredients
-        const ingredients = ['Saint-Jacques fraîches', 'Huile de truffe blanche', 'Fleur de sel'];
-
-        function renderIngredients() {
-            const list = document.getElementById('ingredientsList');
-            list.innerHTML = ingredients.map((ing, i) => `
-      <div class="flex items-center gap-3 bg-s2 border border-gold/[.08] px-4 py-2.5 group">
-        <span class="w-4 h-4 border border-gold/20 flex items-center justify-center text-[9px] text-gold/40 flex-shrink-0">${i+1}</span>
-        <input value="${ing}" class="flex-1 bg-transparent border-0 outline-none text-[12px] text-cream font-body" placeholder="Ingrédient…"/>
-        <button onclick="removeIngredient(${i})" class="text-cream/20 hover:text-cred transition-colors bg-transparent border-0 cursor-pointer opacity-0 group-hover:opacity-100 text-xs">✕</button>
-      </div>`).join('');
-        }
-
-        function addIngredient() {
-            ingredients.push('');
-            renderIngredients();
-            const inputs = document.querySelectorAll('#ingredientsList input');
-            inputs[inputs.length - 1].focus();
-        }
-
-        function removeIngredient(i) {
-            ingredients.splice(i, 1);
-            renderIngredients();
-        }
-        renderIngredients();
-
-        // Image upload
-        function handleFile(input) {
-            const file = input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = e => {
-                document.getElementById('imagePreview').src = e.target.result;
-                document.getElementById('imgName').textContent = file.name;
-                document.getElementById('imgSize').textContent = `${(file.size/1024).toFixed(1)} KB`;
-                document.getElementById('imagePreviewWrap').classList.remove('hidden');
-                document.getElementById('imagePreviewWrap').classList.add('flex');
-                document.getElementById('dropZone').classList.add('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            document.getElementById('dropZone').classList.remove('drag-over');
-            const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('image/')) {
-                const dt = new DataTransfer();
-                dt.items.add(file);
-                const input = document.getElementById('fileInput');
-                input.files = dt.files;
-                handleFile(input);
-            }
-        }
-
-        function removeImage() {
-            document.getElementById('imagePreview').src = '';
-            document.getElementById('fileInput').value = '';
-            document.getElementById('imagePreviewWrap').classList.add('hidden');
-            document.getElementById('imagePreviewWrap').classList.remove('flex');
-            document.getElementById('dropZone').classList.remove('hidden');
-        }
+    function removeImage() {
+        document.getElementById('fileInput').value = '';
+        document.getElementById('imagePreviewWrap').style.display = 'none';
+        document.getElementById('imagePreview').src = '';
+    }

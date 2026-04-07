@@ -6,6 +6,7 @@ use App\Http\Requests\CreateReservationRequest;
 use App\Services\ReservationService;
 use App\Models\MenuItem;
 use App\Models\Order;
+use App\Events\ReservationCreated;
 use Illuminate\Support\Facades\Auth;
 
 class ReservationController extends Controller
@@ -21,30 +22,31 @@ class ReservationController extends Controller
         $result = ReservationService::Store($request->validated());
 
         if (!$result['success']) {
-            return redirect()->back()
-                ->with('error', $result['message'])
-                ->withInput();
+            return redirect()->route('reservation')->with('error', $result['message']);
         }
 
-        $reservation = $result['reservation'];
+        // Fire event
+            event(new ReservationCreated($result['reservation']));
 
-        $cart = json_decode($request->pre_order, true);
+        return redirect()->back()->with('success', 'Reservation created');
+        // $reservation = $result['reservation'];
 
-        if ($cart) {
-            foreach ($cart as $item) {
-                $totalPrice = $item['quantity'] * $item['price'];
+        // $cart = json_decode($request->pre_order, true);
 
-                $reservation->Orders()->create([
-                    'item_id'     => $item['id'],
-                    'quantity'    => $item['quantity'],
-                    'total_price' => $totalPrice,
-                    'order_date'  => now(),
-                    'status'      => 'pending',
-                    'user_id'     => Auth::id(),
-                ]);
-            }
-        }
+        // if ($cart) {
+        //     foreach ($cart as $item) {
+        //         $totalPrice = $item['quantity'] * $item['price'];
 
-        return redirect()->route('home')->with('success', $result['message']);
+        //         $reservation->Orders()->create([
+        //             'item_id'     => $item['id'],
+        //             'quantity'    => $item['quantity'],
+        //             'total_price' => $totalPrice,
+        //             'order_date'  => now(),
+        //             'status'      => 'pending',
+        //             'user_id'     => Auth::id(),
+        //         ]);
+        //     }
+        // }
+
     }
 }

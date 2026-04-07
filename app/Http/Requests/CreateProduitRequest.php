@@ -1,20 +1,36 @@
 <?php
+
+namespace App\Http\Requests;
+
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Request;
 
 class CreateProduitRequest extends FormRequest
 {
-    public static function handle($request)
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+public function authorize(): bool
+{
+    return true;
+}
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
     {
-        $validatedData = $request->validate([
-            'name'        => 'required|string|max:255',
-            'category'    => 'required',
-            'description' => 'required|string|max:200',
-            'prix'        => 'required|numeric|min:0',
-            'temp_prepa'  => 'nullable|integer|min:0|max:600',
-            'status'      => 'required|in:Disponible,Temporairement indisponible',
-            'image'       => 'nullable|image|mimes:jpeg,png,webp|max:5120',
-        ]);
-        return $validatedData;
+        return [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'prix' => 'required|numeric|min:0',
+            'category' => 'required|string|max:255',
+            'image' => 'nullable|image|max:2048',
+            'temp_prepa' => 'required|integer|min:1',
+            'status' => 'required|in:disponible,indisponible',
+            'action' => 'required|in:publish,draft'
+            
+        ];
     }
 }

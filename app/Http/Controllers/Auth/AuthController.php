@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\SignupRequest;
 use App\Models\User;
 
@@ -15,7 +16,7 @@ class AuthController extends Controller
 {
     public function store(SignupRequest $request)
     {
-        dd($request->phone);
+
         $role = Role::where('name', 'customer')->first();
         $user = User::create([
             'name' => $request->name,
@@ -42,7 +43,9 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->remember)) {
             $request->session()->regenerate();
-
+            if(Auth::user()->role->name === 'admin') {
+                return redirect()->route('Dashboard');
+            }   
             return redirect()->route('home');
         }
 
@@ -58,6 +61,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect('/');
     }
+
 }

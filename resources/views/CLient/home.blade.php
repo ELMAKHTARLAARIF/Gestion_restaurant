@@ -6,9 +6,10 @@
 
   <!-- ══════════════════════════════════════
      HERO
-     
+
 ══════════════════════════════════════ -->
 
+@include('Component.HandleMessages')
   <section id="top" class="relative h-screen flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0 overflow-hidden">
       <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1920&q=85"
@@ -81,8 +82,6 @@
   <!-- ══════════════════════════════════════
      MENU
 ══════════════════════════════════════ -->
-@include('Shered.Menu')
-
 
   <!-- ══════════════════════════════════════
      CTA PARALLAX BANNER
@@ -181,15 +180,8 @@
 @include('CLient.Contact')
 
 
-  <!-- FOOTER -->
 @include('Component.footer')
 
-r  <!-- ══════════════════════════════════════
-     RESERVATION MODAL
-══════════════════════════════════════ -->
-  <!-- ══════════════════════════════════════
-     ORDER DRAWER (slide-in)
-══════════════════════════════════════ -->
 @include('CLient.Order')
 
   <!-- TOAST -->

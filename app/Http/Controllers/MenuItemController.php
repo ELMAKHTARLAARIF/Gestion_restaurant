@@ -2,30 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateContactRequest;
+use App\Http\Requests\CreateProduitRequest as RequestsCreateProduitRequest;
 use Illuminate\Http\Request;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
-use CreateProduitRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
-use Symfony\Component\Routing\Route;
+use Illuminate\Support\Facades\Route as FacadesRoute;
+use App\Http\Requests\CreateProduitRequest;
+
+use function PHPUnit\Framework\returnArgument;
 
 class MenuItemController extends Controller
 {
     public function show()
     {
         $items = MenuItem::with('category')->get();
-        if (route('home'))
-            return View('CLient.home', compact('items'));
-        else
-            return View('Admin.Items', compact('items'));
+        $route = FacadesRoute::currentRouteName();
+        if ($route === 'home') {
+            return view('CLient.home', compact('items'));
+        } else if ($route === 'menu') {
+
+            return view('CLient.Menu', compact('items'));
+        } else
+        {
+            return view('Admin.dashboard');
+        }
     }
 
-    public function create(Request $request)
+    public function create(CreateProduitRequest $request)
     {
-        $validatedData = CreateProduitRequest::handle($request);
-
-        $validatedData['user_id'] = 1; // or Auth::id();
+        $validatedData = $request->validated();
+        $validatedData['user_id'] = Auth::id();
 
         $category = MenuCategory::firstOrCreate([
             'name' => $validatedData['category']
@@ -40,12 +48,13 @@ class MenuItemController extends Controller
         }
 
         try {
-            $item = MenuItem::create($validatedData);
+            MenuItem::create($validatedData);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
 
-        return redirect()->route('Dashboard')->with('success', 'Item ajouté avec succès.');
+        return redirect()->route('Dashboard')
+            ->with('success', 'Item ajouté avec succès.');
     }
 
     public function delete($id)
@@ -63,8 +72,7 @@ class MenuItemController extends Controller
         $item = MenuItem::find($id);
         if ($item->status == 'Temporairement indisponible') {
             $item->update('status, Disponible');
-        }
-        else
+        } else
             $item->update('status, Temporairement indisponible');
     }
 }
