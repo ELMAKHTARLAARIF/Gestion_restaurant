@@ -159,7 +159,7 @@
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-[9px] tracking-[.2em] uppercase text-cream/30 mb-2">Personnes *</label>
-              <select name="numberOfPeaple"
+              <select name="numberOfPeople"
                 class="w-full bg-s2 border border-gold/[.12] px-4 py-3.5 text-[13px] text-cream font-body cursor-pointer focus:outline-none focus:border-gold/50"
                 required>
                 @for($i=1; $i<=10; $i++)
@@ -182,7 +182,7 @@
           <!-- Notes -->
           <div>
             <label class="block text-[9px] tracking-[.2em] uppercase text-cream/30 mb-2">Notes & demandes spéciales</label>
-            <textarea name="notes" rows="3"
+            <textarea  name="special_requests" rows="3"
               placeholder="Allergies, préférences, occasion spéciale…"
               class="w-full bg-s2 border border-gold/[.12] px-4 py-3.5 text-[13px] text-cream placeholder-cream/20 font-body transition-colors focus:outline-none focus:border-gold/50 resize-y"></textarea>
           </div>

@@ -28,7 +28,8 @@ class AuthController extends Controller
         ]);
 
         if ($user) {
-            return redirect()->route('login')->with('success', 'Compte créé avec succès');
+            $request->session()->regenerate();
+            return redirect()->route('home');
         } else {
             return redirect()->back()->with('error', 'Failed signing');
         }
@@ -43,9 +44,9 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->remember)) {
             $request->session()->regenerate();
-            if(Auth::user()->role->name === 'admin') {
+            if (Auth::user()->role->name === 'admin') {
                 return redirect()->route('Dashboard');
-            }   
+            }
             return redirect()->route('home');
         }
 
@@ -63,5 +64,4 @@ class AuthController extends Controller
 
         return redirect('/');
     }
-
 }

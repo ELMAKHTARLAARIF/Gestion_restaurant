@@ -22,11 +22,10 @@ class MenuItemController extends Controller
         if ($route === 'home') {
             return view('CLient.home', compact('items'));
         } else if ($route === 'menu') {
-
             return view('CLient.Menu', compact('items'));
         } else
         {
-            return view('Admin.dashboard');
+            return view('Shered.Menu', compact('items'));
         }
     }
 

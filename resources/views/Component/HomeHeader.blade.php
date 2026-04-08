@@ -22,6 +22,7 @@
       <span id="hb2" class="block w-6 h-[1.5px] bg-ivory transition-all duration-300"></span>
       <span id="hb3" class="block w-6 h-[1.5px] bg-ivory transition-all duration-300 origin-center"></span>
     </button>
+    <a href="{{ route('logout') }}" class="hover:text-yellow-600 no-underline text-[11px] tracking-[.16em] uppercase text-ivory/50 hover:text-ivory px-4 py-2 transition-colors">Se déconnecter</a>
   </nav>
   <!-- Mobile menu -->
 

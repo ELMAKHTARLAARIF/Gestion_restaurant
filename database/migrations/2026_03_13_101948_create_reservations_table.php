@@ -18,7 +18,10 @@ return new class extends Migration
             $table->string('telephone');
             $table->date('reservationDate');
             $table->time('Hour');
-            $table->integer('numberOfPeaple');
+            $table->integer('numberOfPeople');
+            $table->unsignedBigInteger('customer_id');
+            $table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('special_requests')->nullable();
             $table->integer('tableNumber');
             $table->enum('status',['confirmed','cancelled'])->default('confirmed');
             $table->timestamps();

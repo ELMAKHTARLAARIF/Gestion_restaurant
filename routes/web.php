@@ -40,6 +40,10 @@ Route::get('/Dashboard', [AdminController::class, 'dashboard'])->name('Dashboard
     })->name('AddItem');
     Route::get('/Items', [MenuItemController::class, 'show'])->name('show_items');
     Route::get('/Reservations', [AdminController::class, 'ShowReservationsPage'])->name('admin.reservations');
+    Route::get('/Infos', [AdminController::class, 'ShowRestaurantInfo'])->name('Restaurant_Info');
+    Route::get('/reservation/accept/{id}', [ReservationController::class, 'accept'])->name('admin.reservation.accept');
+    Route::get('/reservation/cancel/{id}', [ReservationController::class, 'cancel'])->name('admin.reservations.cancel');
+    Route::get('/reservation/delete/{id}', [ReservationController::class, 'delete'])->name('admin.reservation.delete');
 });
 
 Route::middleware(['auth', 'role:customer,waiter,cooker'])->group(function () {

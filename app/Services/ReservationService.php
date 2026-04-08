@@ -42,9 +42,10 @@ class ReservationService
             'customer_id'     => $customer->id,
             'reservationDate' => $data['reservationDate'],
             'Hour'            => $data['Hour'],
-            'numberOfPeaple'  => $data['numberOfPeaple'],
+            'numberOfPeople'  => $data['numberOfPeople'],
             'tableNumber'     => $data['tableNumber'],
             'status'          => 'pending',
+            'special_requests'=> $data['special_requests'] ?? null,
         ]);
 
         return [

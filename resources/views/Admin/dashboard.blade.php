@@ -22,8 +22,8 @@
         <span class="text-[10px] tracking-[.25em] uppercase text-cream/40">Revenus</span>
         <span class="text-base opacity-50">💰</span>
       </div>
-      <div class="font-display text-[2.4rem] font-light leading-none mb-2 text-gold">8 420</div>
-      <div class="text-[11px] text-cgreen flex items-center gap-1">▲ 8.3% <span class="text-cream/25 ml-1">MAD</span></div>
+      <div class="font-display text-[2.4rem] font-light leading-none mb-2 text-gold">{{ number_format($Revenus, 2) }} MAD</div>
+      <div class="text-[11px] text-cgreen flex items-center gap-1">▲ {{ $trend }}% <span class="text-cream/25 ml-1">MAD</span></div>
     </div>
     <!-- card 3 -->
     <div class="stat-card relative bg-s1 px-7 py-6 overflow-hidden">
@@ -64,36 +64,14 @@
         <span class="text-[11px] tracking-[.15em] uppercase text-gold/80 cursor-pointer hover:text-gold transition-colors">Voir tout</span>
       </div>
       <div class="px-6 py-3 divide-y divide-gold/[.05]">
+        @foreach($reservations as $reservation)
         <div class="flex items-start gap-3 py-3">
           <div class="w-2 h-2 border border-cgreen bg-cgreen/20 flex-shrink-0 mt-1.5"></div>
-          <div class="flex-1 text-[12px] leading-relaxed">Réservation — <span class="text-gold">Table 12</span>, M. Alami (4p)</div>
-          <div class="text-[10px] text-cream/20 whitespace-nowrap">5 min</div>
+          <div class="flex-1 text-[12px] leading-relaxed">Réservation — <span class="text-gold">Table {{ $reservation->tableNumber }}</span>, M. {{ $reservation->customer->name ?? 'Client non spécifié' }} ({{ $reservation->numberOfPeaple }}p)</div>
+          <div class="text-[10px] text-cream/20 whitespace-nowrap">{{ \Carbon\Carbon::parse($reservation->created_at)->diffForHumans() }}</div>
         </div>
-        <div class="flex items-start gap-3 py-3">
-          <div class="w-2 h-2 border border-gold bg-gold/20 flex-shrink-0 mt-1.5"></div>
-          <div class="flex-1 text-[12px] leading-relaxed">Commande <span class="text-gold">#0248</span> — Carpaccio ×2</div>
-          <div class="text-[10px] text-cream/20 whitespace-nowrap">12 min</div>
-        </div>
-        <div class="flex items-start gap-3 py-3">
-          <div class="w-2 h-2 border border-cred bg-cred/20 flex-shrink-0 mt-1.5"></div>
-          <div class="flex-1 text-[12px] leading-relaxed">Annulation — <span class="text-gold">Table 7</span>, Mme Bennis</div>
-          <div class="text-[10px] text-cream/20 whitespace-nowrap">28 min</div>
-        </div>
-        <div class="flex items-start gap-3 py-3">
-          <div class="w-2 h-2 border border-cgreen bg-cgreen/20 flex-shrink-0 mt-1.5"></div>
-          <div class="flex-1 text-[12px] leading-relaxed">Paiement — <span class="text-gold">1 240 MAD</span>, Table 3</div>
-          <div class="text-[10px] text-cream/20 whitespace-nowrap">41 min</div>
-        </div>
-        <div class="flex items-start gap-3 py-3">
-          <div class="w-2 h-2 border border-gold bg-gold/20 flex-shrink-0 mt-1.5"></div>
-          <div class="flex-1 text-[12px] leading-relaxed">Avis ⭐⭐⭐⭐⭐ — <span class="text-gold">«Excellent»</span></div>
-          <div class="text-[10px] text-cream/20 whitespace-nowrap">1h</div>
-        </div>
-        <div class="flex items-start gap-3 py-3">
-          <div class="w-2 h-2 border border-cgreen bg-cgreen/20 flex-shrink-0 mt-1.5"></div>
-          <div class="flex-1 text-[12px] leading-relaxed">Réservation — <span class="text-gold">Table 22</span>, 6 pers. 20h30</div>
-          <div class="text-[10px] text-cream/20 whitespace-nowrap">1h 20</div>
-        </div>
+        @endforeach
+
       </div>
     </div>
   </div>
@@ -115,33 +93,38 @@
             <th class="text-left px-4 py-3 text-[9px] tracking-[.25em] uppercase text-cream/25 font-normal">Pers.</th>
             <th class="text-left px-4 py-3 text-[9px] tracking-[.25em] uppercase text-cream/25 font-normal">Statut</th>
             <th class="text-left px-4 py-3 text-[9px] tracking-[.25em] uppercase text-cream/25 font-normal">Demande</th>
-            <th class="text-left px-4 py-3 text-[9px] tracking-[.25em] uppercase text-cream/25 font-normal">Actions</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gold/[.05]">
           <!-- row -->
+          @foreach($todayResevations as $reservation)
           <tr class="hover:bg-gold/[.02] transition-colors">
             <td class="px-6 py-4">
               <div class="flex items-center gap-3">
-                <div class="w-7 h-7 bg-gold/10 border border-gold/20 flex items-center justify-center text-[10px] text-gold">{{ substr($todayResevations->first()->customer->name ?? 'Client non spécifié', 0, 2) }}</div>
-                <span class="text-[13px]">{{ $todayResevations->first()->customer->name ?? 'Client non spécifié' }}</span>
+                <div class="w-7 h-7 bg-gold/10 border border-gold/20 flex items-center justify-center text-[10px] text-gold">{{ substr($reservation->customer->name ?? 'Client non spécifié', 0, 2) }}</div>
+                <span class="text-[13px]">{{ $reservation->customer->name ?? 'Client non spécifié' }}</span>
               </div>
             </td>
-            <td class="px-4 py-4 text-[13px] text-cream/70">{{ $todayResevations->first()->tableNumber ?? 'Table non spécifiée' }}</td>
-            <td class="px-4 py-4 text-[13px] text-cream/70">{{ $todayResevations->first()->reservationDate ?? 'Date non spécifiée' }}</td>
-            <td class="px-4 py-4 text-[13px] text-cream/70">{{ $todayResevations->first()->Hour ?? 'Heure non spécifiée' }}</td>
-            <td class="px-4 py-4 text-[13px] text-cream/70">{{ $todayResevations->first()->numberOfPeaple ?? 'Nombre de personnes non spécifié' }}</td>
-            <td class="px-4 py-4"><span class="inline-flex items-center gap-1.5 text-[10px] tracking-wide px-2.5 py-1 bg-cgreen/10 border border-cgreen/20 text-cgreen"><span class="w-1.5 h-1.5 rounded-full bg-cgreen"></span>{{ $todayResevations->first()->status ?? 'Statut non spécifié' }}</span></td>
-            <td class="px-4 py-4 text-[12px] text-cream/35">{{ $todayResevations->first()->special_requests ?? 'Aucune demande spéciale' }}</td>
+            <td class="px-4 py-4 text-[13px] text-cream/70">{{ $reservation->tableNumber ?? 'Table non spécifiée' }}</td>
+            <td class="px-4 py-4 text-[13px] text-cream/70">{{ $reservation->reservationDate ?? 'Date non spécifiée' }}</td>
+            <td class="px-4 py-4 text-[13px] text-cream/70">{{ $reservation->Hour ?? 'Heure non spécifiée' }}</td>
+            <td class="px-4 py-4 text-[13px] text-cream/70">{{ $reservation->numberOfPeople ?? 'Nombre de personnes non spécifié' }}</td>
+            @if($reservation->status === 'accepted')
+            <td class="px-4 py-4"><span class="inline-flex items-center gap-1.5 text-[10px] tracking-wide px-2.5 py-1 bg-cgreen/10 border border-cgreen/20 text-cgreen"><span class="w-1.5 h-1.5 rounded-full bg-cgreen"></span>{{ ucfirst($reservation->status) }}</span></td>
+            @elseif($reservation->status === 'cancelled')
+            <td class="px-4 py-4"><span class="inline-flex items-center gap-1.5 text-[10px] tracking-wide px-2.5 py-1 bg-cred/10 border border-cred/20 text-cred"><span class="w-1.5 h-1.5 rounded-full bg-cred"></span>{{ ucfirst($reservation->status) }}</span></td>
+            @elseif($reservation->status === 'pending')
+            <td class="px-4 py-4"><span class="inline-flex items-center gap-1.5 text-[10px] tracking-wide px-2.5 py-1 bg-gold/10 border border-gold/20 text-gold"><span class="w-1.5 h-1.5 rounded-full bg-gold"></span>{{ ucfirst($reservation->status) }}</span></td>
+            @else
+            <td class="px-4 py-4"><span class="inline-flex items-center gap-1.5 text-[10px] tracking-wide px-2.5 py-1 bg-cblue/10 border border-cblue/20 text-cblue"><span class="w-1.5 h-1.5 rounded-full bg-cblue"></span>{{ ucfirst($reservation->status) }}</span></td>
+            @endif
+            <td class="px-4 py-4 text-[12px] text-cream/35">{{ $reservation->special_requests ?? 'Aucune demande spéciale' }}</td>
             <td class="px-4 py-4">
-              <div class="flex gap-1.5">
-                <button class="w-7 h-7 border border-gold/[.12] text-cream/35 hover:border-gold hover:text-gold transition-all text-xs flex items-center justify-center">✏</button>
-                <button class="w-7 h-7 border border-gold/[.12] text-cream/35 hover:border-cgreen hover:text-cgreen transition-all text-xs flex items-center justify-center">✓</button>
-                <button class="w-7 h-7 border border-gold/[.12] text-cream/35 hover:border-cred hover:text-cred transition-all text-xs flex items-center justify-center">✕</button>
-              </div>
+
             </td>
           </tr>
-         
+          @endforeach
+
         </tbody>
       </table>
     </div>
@@ -180,71 +163,22 @@
       </div>
       <div class="px-6 py-3 divide-y divide-gold/[.05]">
         <!-- dish rows -->
+        @foreach($DayBestPlats as $index => $plat)
         <div class="flex items-center gap-3 py-3">
-          <span class="font-display text-lg text-gold/30 w-5">1</span>
+          <span class="font-display text-lg text-gold/30 w-5">{{ $index + 1 }}</span>
           <div class="flex-1">
-            <div class="text-[13px] mb-0.5">Côte de Bœuf</div>
-            <div class="text-[10px] text-cream/35 tracking-wide">Plats · 380 MAD</div>
+            <div class="text-[13px] mb-0.5">{{ $plat->name }}</div>
+            <div class="text-[10px] text-cream/35 tracking-wide">Plats · {{ $plat->prix }} MAD</div>
           </div>
           <div class="w-20">
             <div class="h-0.5 bg-gold/10 relative">
               <div class="h-full bg-gold" style="width:100%"></div>
             </div>
           </div>
-          <span class="text-[12px] text-gold w-8 text-right">24</span>
+          <span class="text-[12px] text-gold w-8 text-right">{{ $plat->total_quantity ?? 0 }}</span>
         </div>
-        <div class="flex items-center gap-3 py-3">
-          <span class="font-display text-lg text-gold/30 w-5">2</span>
-          <div class="flex-1">
-            <div class="text-[13px] mb-0.5">Saint-Jacques</div>
-            <div class="text-[10px] text-cream/35 tracking-wide">Entrées · 185 MAD</div>
-          </div>
-          <div class="w-20">
-            <div class="h-0.5 bg-gold/10">
-              <div class="h-full bg-gold" style="width:78%"></div>
-            </div>
-          </div>
-          <span class="text-[12px] text-gold w-8 text-right">19</span>
-        </div>
-        <div class="flex items-center gap-3 py-3">
-          <span class="font-display text-lg text-gold/30 w-5">3</span>
-          <div class="flex-1">
-            <div class="text-[13px] mb-0.5">Fondant Chocolat</div>
-            <div class="text-[10px] text-cream/35 tracking-wide">Desserts · 95 MAD</div>
-          </div>
-          <div class="w-20">
-            <div class="h-0.5 bg-gold/10">
-              <div class="h-full bg-gold" style="width:65%"></div>
-            </div>
-          </div>
-          <span class="text-[12px] text-gold w-8 text-right">16</span>
-        </div>
-        <div class="flex items-center gap-3 py-3">
-          <span class="font-display text-lg text-gold/30 w-5">4</span>
-          <div class="flex-1">
-            <div class="text-[13px] mb-0.5">Tagine d'Agneau</div>
-            <div class="text-[10px] text-cream/35 tracking-wide">Plats · 290 MAD</div>
-          </div>
-          <div class="w-20">
-            <div class="h-0.5 bg-gold/10">
-              <div class="h-full bg-gold" style="width:54%"></div>
-            </div>
-          </div>
-          <span class="text-[12px] text-gold w-8 text-right">13</span>
-        </div>
-        <div class="flex items-center gap-3 py-3">
-          <span class="font-display text-lg text-gold/30 w-5">5</span>
-          <div class="flex-1">
-            <div class="text-[13px] mb-0.5">Harira Gastro.</div>
-            <div class="text-[10px] text-cream/35 tracking-wide">Entrées · 95 MAD</div>
-          </div>
-          <div class="w-20">
-            <div class="h-0.5 bg-gold/10">
-              <div class="h-full bg-gold" style="width:42%"></div>
-            </div>
-          </div>
-          <span class="text-[12px] text-gold w-8 text-right">10</span>
-        </div>
+        @endforeach
+
       </div>
     </div>
 

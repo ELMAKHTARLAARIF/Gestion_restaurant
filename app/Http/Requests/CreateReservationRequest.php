@@ -23,8 +23,9 @@ class CreateReservationRequest extends FormRequest
                         'telephone'       => 'required|string|max:20',
                         'reservationDate' => 'required|date|after_or_equal:today',
                         'Hour'            => 'required|string',
-                        'numberOfPeaple'  => 'required|integer|min:1|max:8',
+                        'numberOfPeople'  => 'required|integer|min:1|max:8',
                         'tableNumber'     => 'required|integer|min:1|max:10',
+                        'special_requests' => 'nullable|string|max:500',
                 ];
         }
 
@@ -32,7 +33,7 @@ class CreateReservationRequest extends FormRequest
         {
                 return [
                         'reservationDate.after_or_equal' => 'The reservation date must be today or in the future.',
-                        'numberOfPeaple.max'             => 'For more than 8 guests, please contact us directly.',
+                        'numberOfPeople.max'             => 'For more than 8 guests, please contact us directly.',
                 ];
         }
 }

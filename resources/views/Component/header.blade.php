@@ -97,9 +97,9 @@
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">👥</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Personnel</span>
             </a>
-            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
-                <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">📊</span>
-                <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Analytique</span>
+            <a href="{{route('Restaurant_Info')}}" class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
+                <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">ℹ</span>
+                <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Informations de Restaurant</span>
             </a>
             <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">⚙</span>
