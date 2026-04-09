@@ -217,32 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // add produit
 
-    const d = new Date();
-    document.getElementById('topDate').textContent = d.toLocaleDateString('fr-FR', { weekday:'short', day:'2-digit', month:'long' });
 
-    // Live preview
-    function updatePreview() {
-        const name  = document.getElementById('itemName').value;
-        const cat   = document.getElementById('itemCat').selectedOptions[0]?.text || 'Catégorie';
-        const desc  = document.getElementById('itemDesc').value;
-        const price = document.getElementById('itemPrice').value;
-        const time  = document.getElementById('itemTime').value;
-
-        document.getElementById('prevName').textContent  = name  || 'Nom du plat';
-        document.getElementById('prevName').style.color  = name  ? '#F5F0E8' : 'rgba(245,240,232,.4)';
-        document.getElementById('prevCat').textContent   = cat !== 'Sélectionner…' ? cat : 'Catégorie';
-        document.getElementById('prevDesc').textContent  = desc  || 'Description du plat…';
-        document.getElementById('prevPrice').innerHTML   = price ? `${parseInt(price).toLocaleString('fr-FR')} <span style="font-size:.8rem;color:rgba(245,240,232,.3);">MAD</span>` : `— <span style="font-size:.8rem;color:rgba(245,240,232,.2);">MAD</span>`;
-        document.getElementById('prevPrice').style.color = price ? '#C8A96E' : 'rgba(200,169,110,.4)';
-        document.getElementById('prevTime').textContent  = time  ? `⏱ ${time} min` : '⏱ — min';
-    }
-
-    function updateChar() {
-        const len = document.getElementById('itemDesc').value.length;
-        document.getElementById('charCount').textContent = `${len} / 200`;
-    }
-
-    // Image handling
     function handleFile(input) {
         const file = input.files[0];
         if (!file) return;

@@ -34,7 +34,7 @@ Route::middleware(['auth', 'admin',])->group(function () {
 
     Route::post('/Product/create', [MenuItemController::class, 'create'])->name('create');
 
-Route::get('/Dashboard', [AdminController::class, 'dashboard'])->name('Dashboard');
+    Route::get('/Dashboard', [AdminController::class, 'dashboard'])->name('Dashboard');
     Route::get('Add/Item', function () {
         return View('Admin.addProduit');
     })->name('AddItem');
@@ -44,6 +44,12 @@ Route::get('/Dashboard', [AdminController::class, 'dashboard'])->name('Dashboard
     Route::get('/reservation/accept/{id}', [ReservationController::class, 'accept'])->name('admin.reservation.accept');
     Route::get('/reservation/cancel/{id}', [ReservationController::class, 'cancel'])->name('admin.reservations.cancel');
     Route::get('/reservation/delete/{id}', [ReservationController::class, 'delete'])->name('admin.reservation.delete');
+    Route::get('/Orders', [OrderController::class, 'Show'])->name('admin.orders');
+    // gestion menu 
+    Route::get('{id}/edit', [MenuItemController::class, 'edit'])->name('menu.edit');
+    Route::put('{id}', [MenuItemController::class, 'update'])->name('update');
+    Route::delete('{id}', [MenuItemController::class, 'destroy'])->name('menu.destroy');
+    Route::post('{id}/toggle', [MenuItemController::class, 'toggle'])->name('menu.toggle');
 });
 
 Route::middleware(['auth', 'role:customer,waiter,cooker'])->group(function () {
@@ -52,8 +58,7 @@ Route::middleware(['auth', 'role:customer,waiter,cooker'])->group(function () {
 
     Route::post('/contact', [ContactMessageController::class, 'Send'])->name('contact');
     Route::get('/home', [MenuItemController::class, 'show'])->name('home');
-    Route::post('/stripe-intent', [OrderController::class, 'createPaymentIntent'])->name('stripe.intent');
-
-    Route::post('/order', [OrderController::class, 'store'])->name('order.store');
+    Route::post('/order/payment-intent', [OrderController::class, 'createPaymentIntent']);
+    Route::post('/order/store', [OrderController::class, 'store']);
     Route::get('/menu', [MenuItemController::class, 'show'])->name('menu');
 });

@@ -18,8 +18,7 @@
       </div>
 
       <!-- Grid -->
-      <form action=""  id="menuGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gold/[.07]" method="POST">
-        @csrf
+      <div id="menuGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gold/[.07]">
         @foreach($items as $item)
         <div class="mc relative bg-s1 flex flex-col overflow-hidden group cursor-pointer" data-cat="plats">
           <div class="overflow-hidden h-56 relative">
@@ -35,10 +34,29 @@
               <div class="flex items-center gap-2"><span class="text-[10px] text-cream/25">⏱ {{$item->temp_prepa}}</span><span class="text-[9px] px-2 py-0.5 border border-gold/20 text-gold/55">🕌 Halal</span></div>
             </div>
           </div>
+          <div class="absolute top-3 right-3 flex gap-1">
+            <!-- Edit button -->
+            <a href="{{ route('menu.edit', $item->id) }}" class="px-2 py-1 bg-blue-600 text-white text-[10px] rounded hover:bg-blue-700">Edit</a>
+
+            <!-- Delete button -->
+            <form action="{{ route('menu.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this item?');">
+              @csrf
+              @method('DELETE')
+              <button type="submit" class="px-2 py-1 bg-red-600 text-white text-[10px] rounded hover:bg-red-700">Delete</button>
+            </form>
+
+            <!-- Toggle visibility -->
+            <form action="{{ route('menu.toggle', $item->id) }}" method="POST">
+              @csrf
+              <button type="submit" class="px-2 py-1 bg-yellow-500 text-dark text-[10px] rounded hover:bg-yellow-600">
+                {{ $item->status === 'active' ? 'Hide' : 'Show' }}
+              </button>
+            </form>
+          </div>
         </div>
         @endforeach
 
+      </div>
+      <div class="text-center mt-10"><a href="#" class="inline-block px-10 py-4 border border-cream/20 text-cream text-[11px] tracking-[.18em] uppercase hover:border-gold hover:text-gold transition-all no-underline">Voir la carte complète</a></div>
     </div>
-    <div class="text-center mt-10"><a href="#" class="inline-block px-10 py-4 border border-cream/20 text-cream text-[11px] tracking-[.18em] uppercase hover:border-gold hover:text-gold transition-all no-underline">Voir la carte complète</a></div>
-    </forom>
   </section>

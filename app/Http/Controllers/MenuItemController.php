@@ -23,8 +23,7 @@ class MenuItemController extends Controller
             return view('CLient.home', compact('items'));
         } else if ($route === 'menu') {
             return view('CLient.Menu', compact('items'));
-        } else
-        {
+        } else {
             return view('Shered.Menu', compact('items'));
         }
     }
@@ -73,5 +72,35 @@ class MenuItemController extends Controller
             $item->update('status, Disponible');
         } else
             $item->update('status, Temporairement indisponible');
+    }
+
+
+
+    public function edit($id)
+    {
+        $item = MenuItem::findOrFail($id);
+        return view('admin.menu.edit', compact('item'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $item = MenuItem::findOrFail($id);
+        $item->update($request->all()); // you can add validation here
+        return redirect()->back()->with('success', 'Item updated.');
+    }
+
+    public function destroy($id)
+    {
+        $item = MenuItem::findOrFail($id);
+        $item->delete();
+        return redirect()->back()->with('success', 'Item deleted.');
+    }
+
+    public function toggle($id)
+    {
+        $item = MenuItem::findOrFail($id);
+        $item->status = $item->status === 'active' ? 'inactive' : 'active';
+        $item->save();
+        return redirect()->back()->with('success', 'Item status updated.');
     }
 }

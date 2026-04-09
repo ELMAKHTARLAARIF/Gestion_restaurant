@@ -11,16 +11,8 @@ class MenuItem extends Model
     use HasFactory;
 
     protected $table = 'MenuItem';
-
     protected $fillable = [
-        'name',
-        'description',
-        'prix',
-        'temp_prepa',
-        'image',
-        'status',
-        'user_id',
-        'category_id',
+        'name', 'description', 'prix', 'temp_prepa', 'image', 'status', 'user_id', 'category_id',
     ];
 
     public function category()
@@ -35,6 +27,8 @@ class MenuItem extends Model
 
     public function orders()
     {
-        return $this->belongsToMany(Order::class, 'order_menu_item', 'menu_item_id', 'order_id')->withPivot('quantity');
+        return $this->belongsToMany(Order::class, 'order_menu_item', 'menu_item_id', 'order_id')
+                    ->withPivot('quantity')
+                    ->withTimestamps();
     }
 }
