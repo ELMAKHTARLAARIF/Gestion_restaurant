@@ -24,7 +24,7 @@
       </div>
       <div>
         <div class="text-[9px] tracking-[.3em] uppercase text-gold mb-5">Réservation</div>
-        <p class="text-[12px] text-cream/30 mb-4 leading-relaxed">Réservez votre table en ligne ou appelez-nous.</p><button onclick="openRes()" class="w-full py-3 bg-gold text-dark text-[10px] tracking-[.14em] uppercase font-semibold hover:bg-gold-h transition-all border-0 cursor-pointer mb-3">Réserver une table</button><a href="tel:+212522000000" class="block py-3 border border-gold/15 text-cream/35 text-[10px] tracking-[.14em] uppercase text-center hover:border-gold/35 hover:text-cream transition-all no-underline">+212 522 000 000</a>
+        <a href="{{route('reservation')}}"><p class="text-[12px] text-cream/30 mb-4 leading-relaxed">Réservez votre table en ligne ou appelez-nous.</p><button onclick="openRes()" class="w-full py-3 bg-gold text-dark text-[10px] tracking-[.14em] uppercase font-semibold hover:bg-gold-h transition-all border-0 cursor-pointer mb-3">Réserver une table</button></a><a href="tel:+212522000000" class="block py-3 border border-gold/15 text-cream/35 text-[10px] tracking-[.14em] uppercase text-center hover:border-gold/35 hover:text-cream transition-all no-underline">+212 522 000 000</a>
       </div>
     </div>
     <div class="border-t border-gold/[.07] pt-8 flex flex-wrap justify-between items-center gap-4">

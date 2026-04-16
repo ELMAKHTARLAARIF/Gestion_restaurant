@@ -249,3 +249,34 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('imagePreviewWrap').style.display = 'none';
         document.getElementById('imagePreview').src = '';
     }
+
+
+
+
+
+
+
+
+
+
+
+const btn = document.getElementById("themeToggle");
+
+btn.addEventListener("click", () => {
+    document.body.classList.toggle("light-theme");
+
+    localStorage.setItem(
+        "theme",
+        document.body.classList.contains("light-theme") ? "light" : "dark"
+    );
+});
+
+window.addEventListener("load", () => {
+    if (localStorage.getItem("theme") === "light") {
+        document.body.classList.add("light-theme");
+    }
+});
+
+
+
+

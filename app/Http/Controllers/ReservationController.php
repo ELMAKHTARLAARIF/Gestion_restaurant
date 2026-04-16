@@ -11,9 +11,26 @@ use App\Models\Reservation;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ReservationController extends Controller
 {
+
+    public function index(Request $request)
+    {
+        // All reservations for the authenticated user, newest first
+        $reservations = Reservation::where('customer_id', Auth::id())
+            ->orderByDesc('created_at')
+            ->orderByDesc('created_at')
+            ->get();
+        $total = $reservations->whereIn('status', ['pending', 'accepted'])->count();
+        $confirmed = $reservations->where('status', 'accepted')->count();
+        $pending = $reservations->where('status', 'pending')->count();
+        $historic = $reservations->whereIn('status',['canclled','complete','']);
+
+        return view('CLient.ResevationPanier', compact('reservations','total','confirmed','pending','historic'));
+    }
+
     public function ShowReservationForm()
     {
 
@@ -32,24 +49,6 @@ class ReservationController extends Controller
         event(new ReservationCreated($result['reservation']));
 
         return redirect()->back()->with('success', 'Reservation created');
-        // $reservation = $result['reservation'];
-
-        // $cart = json_decode($request->pre_order, true);
-
-        // if ($cart) {
-        //     foreach ($cart as $item) {
-        //         $totalPrice = $item['quantity'] * $item['price'];
-
-        //         $reservation->Orders()->create([
-        //             'item_id'     => $item['id'],
-        //             'quantity'    => $item['quantity'],
-        //             'total_price' => $totalPrice,
-        //             'order_date'  => now(),
-        //             'status'      => 'pending',
-        //             'user_id'     => Auth::id(),
-        //         ]);
-        //     }
-        // }
 
     }
 

@@ -28,12 +28,13 @@ class SocialController extends Controller
                 'provider' => 'google',
                 'password' => Hash::make(Str::random(24)),
                 'google_id' => $googleUser->getId(),
-                'role_id'=>2
+                'role_id'=>2,
+                'status'=>'active'
             ]
         );
 
         Auth::login($user);
 
-        return redirect('/Dashboard');
+        return redirect()->route('home');
     }
 }

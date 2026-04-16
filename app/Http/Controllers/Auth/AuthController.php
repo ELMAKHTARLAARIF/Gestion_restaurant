@@ -24,7 +24,8 @@ class AuthController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
-            'role_id' => $role->id
+            'role_id' => $role->id,
+            'status'=>'active'
         ]);
 
         if ($user) {

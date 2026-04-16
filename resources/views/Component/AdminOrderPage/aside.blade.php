@@ -1,48 +1,3 @@
-<!DOCTYPE html>
-<html lang="fr">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin | La Maison</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="{{ asset('css/Admin/Dashboard.css') }}" rel="stylesheet">
-    <script src="{{ asset('js/Admin/Dashboard.js') }}" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        gold: '#C8A96E',
-                        'gold-h': '#d4b87c',
-                        dark: '#0B0B0B',
-                        s1: '#111111',
-                        s2: '#161616',
-                        s3: '#1C1C1C',
-                        cream: '#F5F0E8',
-                        cgreen: '#6EC88A',
-                        cred: '#C86E6E',
-                        cblue: '#6E9EC8',
-                    },
-                    fontFamily: {
-                        display: ['"Cormorant Garamond"', 'serif'],
-                        body: ['Jost', 'sans-serif']
-                    },
-                    width: {
-                        sidebar: '240px',
-                        'sidebar-sm': '64px'
-                    },
-                }
-            }
-        }
-    </script>
-
-</head>
-
-<body class="bg-dark text-cream font-body flex" style="font-size:14px;">
-    <!-- ══ SIDEBAR ══ -->
     <aside id="sidebar" class="sidebar-w relative z-20 h-screen bg-s1 border-r border-gold/[.12] flex flex-col overflow-hidden">
         <!-- Collapse btn -->
         <button id="collapseBtn" onclick="toggleSidebar()"
@@ -70,7 +25,7 @@
             <a href="{{route('admin.orders')}}" class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="setPage('orders',this)">
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">🍽</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap flex-1">Commandes</span>
-                <span class="text-black  nav-badge hide-collapsed bg-gold text-dark text-[9px] font-semibold px-1.5 py-0.5">3</span>
+                <span class="text-black nav-badge hide-collapsed bg-gold text-dark text-[9px] font-semibold px-1.5 py-0.5 ">3</span>
             </a>
             <a href="{{route('AddItem')}}">
                 <div class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="window.location.href='add-item.html'">
@@ -88,9 +43,13 @@
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">📋</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Menu</span>
             </a>
-            <a href="{{route('clients')}}" class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
+            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">👤</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Clients</span>
+            </a>
+            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
+                <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">👥</span>
+                <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Personnel</span>
             </a>
             <a href="{{route('Restaurant_Info')}}" class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">ℹ</span>
@@ -111,38 +70,3 @@
             </div>
         </div>
     </aside>
-
-    <!-- ══ MAIN ══ -->
-    <div class="flex-1 flex flex-col overflow-hidden">
-
-        <!-- TOPBAR -->
-        <header class="h-[60px] bg-s1 border-b border-gold/[.12] flex items-center px-8 gap-4 flex-shrink-0">
-            <h1 id="pageTitle" class="font-display text-xl font-light">Tableau de <em class="italic text-gold">bord</em></h1>
-            <div class="flex-1"></div>
-            <!-- Search -->
-            <div class="flex items-center gap-2 bg-s2 border border-gold/[.12] px-4 py-2 w-52">
-                <span class="text-cream/30 text-sm">🔍</span>
-                <input type="text" placeholder="Rechercher…" class="bg-transparent border-0 outline-none text-[12px] text-cream placeholder-cream/25 w-full font-body" />
-            </div>
-            <!-- Actions -->
-            <div class="flex items-center gap-2">
-                @php
-                $pendingCount = \App\Models\Reservation::where('status', 'pending')->count()
-                @endphp
-                <button onclick="toggleNotif()" class="relative w-9 h-9 border border-gold/[.12] flex items-center justify-center text-cream/40 hover:border-gold/35 hover:text-gold transition-all text-sm">
-                    🔔
-                    @if($pendingCount > 0)
-                    <span class="absolute top-1.5 right-1.5 w-3 h-3 bg-gold rounded-full flex items-center justify-center text-[10px] text-black font-bold">
-                        {{ $pendingCount }}
-                    </span>
-                    @endif
-                </button>
-                <button onclick="toggleFS()" class="w-9 h-9 border border-gold/[.12] flex items-center justify-center text-cream/40 hover:border-gold/35 hover:text-gold transition-all text-sm">⛶</button>
-                <a href="{{ route('logout') }}" rel="noopener noreferrer" class="w-9 h-9 border border-gold/[.12] flex items-center justify-center text-cream/40 hover:border-gold/35 hover:text-gold transition-all text-sm">⏻</a>
-            </div>
-            <button id="themeToggle" class="toggle-btn">
-                Toggle Theme
-            </button>
-            <div id="topDate" class="text-[11px] text-cream/35 pl-3 border-l border-gold/[.1]"></div>
-        </header>
-        

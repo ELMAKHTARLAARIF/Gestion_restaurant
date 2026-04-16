@@ -16,12 +16,13 @@ class Order extends Model
         'status',
         'order_date',
         'user_id',
-        'stripe_payment_intent'
+        'stripe_payment_intent',
+        'N°_commande'
     ];
 
-    protected $table = 'Order';
+    protected $table = 'orders';
 
-    public function user()
+    public function customer()
     {
         return $this->belongsTo(User::class, 'user_id');
     }

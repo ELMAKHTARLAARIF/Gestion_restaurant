@@ -15,6 +15,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        abort(403); // forbidden
+        abort(403); 
     }
 }

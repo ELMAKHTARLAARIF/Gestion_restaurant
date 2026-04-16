@@ -13,7 +13,7 @@ class RoleMiddleware
         if (!Auth::check()) {
             return redirect('/');
         }
-        if (in_array(Auth::user()->role->name, $roles)) {
+        if (in_array(Auth::user()->role->name, $roles) && Auth::user()->status === "active") {
             return $next($request);
         }
 

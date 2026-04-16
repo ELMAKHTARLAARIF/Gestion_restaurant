@@ -8,9 +8,24 @@ use Illuminate\Support\Facades\Auth;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\View\View;
 
 class OrderController extends Controller
 {
+    public function Show()
+    {
+        $AllOrders = Order::with(['customer', 'items.menuItem'])->get();
+        $counts = [
+            'pending' => $AllOrders->where('status', 'pending')->count(),
+            'confirmed' => $AllOrders->where('status', 'confirmed')->count(),
+            'preparing' => $AllOrders->where('status', 'preparing')->count(),
+            'ready' => $AllOrders->where('status', 'ready')->count(),
+            'delivered' => $AllOrders->where('status', 'delivered')->count(),
+            'completed' => $AllOrders->where('status', 'completed')->count(),
+            'cancelled' => $AllOrders->where('status', 'cancelled')->count(),
+        ];
+        return view('Admin.Orders', compact('AllOrders', 'counts'));
+    }
     public function createPaymentIntent(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -48,7 +63,6 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validate request
         $validator = Validator::make($request->all(), [
             'items'          => 'required|array|min:1',
             'prenom'         => 'required|string',
@@ -62,13 +76,11 @@ class OrderController extends Controller
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-        // 2. Calculate totals
         $totalPrice = collect($request->items)->sum(fn($i) => ($i['price'] ?? 0) * ($i['qty'] ?? 0));
         $quantity   = collect($request->items)->sum(fn($i) => $i['qty']);
 
         $status = 'pending';
 
-        // 3. Stripe payment verification (if card)
         if ($request->payment_method === 'card' && isset($request->stripe_payment_intent)) {
             try {
                 Stripe::setApiKey(config('stripe.secret'));
@@ -88,7 +100,6 @@ class OrderController extends Controller
             }
         }
 
-        // 4. Create order
         $order = Order::create([
             'reservation_id'        => $request->reservation_id ?? null,
             'user_id'               => Auth::id(),
@@ -97,9 +108,8 @@ class OrderController extends Controller
             'stripe_payment_intent' => $request->stripe_payment_intent ?? null,
             'order_date'            => now(),
             'status'                => $status,
+            'N°_commande' => 'CMD-' . str_pad(Auth::id(), 6, '0', STR_PAD_LEFT)
         ]);
-
-        // 5. Save each item (order_id is automatically set)
         foreach ($request->items as $i) {
             $order->items()->create([
                 'menu_item_id' => $i['id'],
@@ -107,7 +117,6 @@ class OrderController extends Controller
             ]);
         }
 
-        // 6. Return order reference
         $orderRef = '#LM-' . date('Y') . '-' . str_pad($order->id, 4, '0', STR_PAD_LEFT);
 
         return response()->json([
@@ -115,5 +124,32 @@ class OrderController extends Controller
             'order_id'  => $order->id,
             'order_ref' => $orderRef,
         ]);
+    }
+    public function Update_Status($id, Request $request)
+    {
+        $order = Order::findOrFail($id);
+
+        $request->validate([
+            'status' => 'required|in:pending,confirmed,preparing,ready,cancelled,completed,delivered'
+        ]);
+
+        $order->status = $request->status;
+        $order->save();
+
+        return response()->json([
+            'success' => true,
+            'status' => $order->status
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        Order::findOrFail($id)->delete();
+        return response()->json(['success' => true]);
+    }
+    public function ShowPanier()
+    {
+        $orders = Order::with(['customer', 'items.menuItem'])->get();;
+        return View('CLient.Panier', compact('orders'));
     }
 }

@@ -1,7 +1,3 @@
-// ╔══════════════════════════════════════════════════════════════╗
-// ║  La Maison — Menu.js  (full working version)                ║
-// ║  Stripe flow: createPaymentIntent → confirmCardPayment       ║
-// ╚══════════════════════════════════════════════════════════════╝
 
 // ── Cart State ───────────────────────────────────────────────────
 let cart = [];
@@ -103,7 +99,7 @@ function addToCart(card) {
   else cart.push({ id, name, price, qty: 1 });
   renderAll();
   showCartFab();
-  toast('🍽', name, `Ajouté · ${price} MAD`);
+  toast('_', name, `Ajouté · ${price} MAD`);
 }
 
 function rmItem(idx) {
@@ -181,7 +177,7 @@ function closeCart() {
 let curStep = 1;
 
 function openPayModal() {
-  if (!cart.length) return toast('⚠️', 'Panier vide', 'Ajoutez des plats avant de payer.');
+  if (!cart.length) return toast('!', 'Panier vide', 'Ajoutez des plats avant de payer.');
   renderPayRecap();
   document.getElementById('payModal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
@@ -367,8 +363,8 @@ async function confirmPay() {
     const dataOrder = await resOrder.json();
 
     if (!dataOrder.success) throw new Error(dataOrder.message || 'Erreur lors de la commande');
-
-    alert("✅ Commande passée : " + dataOrder.order_ref);
+      let success_border = document.getElementById('payModal');
+    alert(" Commande passée : " + dataOrder.order_ref);
 
   } catch (e) {
     console.error(e);

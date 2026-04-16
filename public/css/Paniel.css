@@ -1,0 +1,138 @@
+body {
+    font-family: 'Jost', sans-serif
+}
+
+::-webkit-scrollbar {
+    width: 3px
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(200, 169, 110, .18)
+}
+
+/* gold shimmer */
+.gtext {
+    background: linear-gradient(90deg, #C8A96E, #f0d9a8 38%, #C8A96E 55%, #a07840);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: sh 3s linear infinite;
+    background-clip: text
+}
+
+/* step line */
+.step-line {
+    height: 2px;
+    flex: 1;
+    transition: background .5s
+}
+
+/* nav link */
+.nav-a {
+    position: relative
+}
+
+.nav-a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #C8A96E;
+    transform: scaleX(0);
+    transition: transform .3s
+}
+
+.nav-a:hover::after {
+    transform: scaleX(1)
+}
+
+/* order card */
+.ocard {
+    transition: border-color .25s, box-shadow .25s, transform .2s
+}
+
+.ocard:hover {
+    border-color: rgba(200, 169, 110, .28);
+    box-shadow: 0 4px 32px rgba(200, 169, 110, .06);
+    transform: translateY(-2px)
+}
+
+/* tab */
+.ftab {
+    border-bottom: 2px solid transparent;
+    transition: all .2s
+}
+
+.ftab.on {
+    border-bottom-color: #C8A96E;
+    color: #C8A96E
+}
+
+/* modal */
+.mbd {
+    background: rgba(0, 0, 0, .88);
+    backdrop-filter: blur(12px)
+}
+
+/* wave bars */
+.bar1 {
+    animation-delay: 0s
+}
+
+.bar2 {
+    animation-delay: .15s
+}
+
+.bar3 {
+    animation-delay: .3s
+}
+
+.bar4 {
+    animation-delay: .45s
+}
+
+/* input */
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: rgba(200, 169, 110, .55) !important;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(200, 169, 110, .07)
+}
+
+/* shine card */
+.shine {
+    position: relative;
+    overflow: hidden
+}
+
+.shine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, .03), transparent);
+    transform: skewX(-18deg);
+    transition: left .6s
+}
+
+.shine:hover::before {
+    left: 140%
+}
+
+/* status pill */
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 9px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border: 1px solid;
+    white-space: nowrap
+}

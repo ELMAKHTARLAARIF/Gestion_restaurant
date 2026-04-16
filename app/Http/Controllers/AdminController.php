@@ -8,9 +8,34 @@ use App\Models\Order;
 use App\Models\Reservation;
 use App\Models\RestaurantInformation;
 use Carbon\Carbon;
+use App\Models\User;
+use Illuminate\View\View;
 
 class AdminController
 {
+    public function index()
+    {
+
+        $activeClients = User::where('status', 'active')->count();
+
+        $inactiveClients = User::where('status', 'inactive')->count();
+
+        $blockedClients = User::where('status', 'blocked')->count();
+        $totalClients = User::count();
+        $newClientsThisMonth = User::whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->count();
+        $users = User::latest()->paginate(10);
+
+        return view('Admin.Users', compact(
+            'activeClients',
+            'inactiveClients',
+            'blockedClients',
+            'users',
+            'totalClients',
+            'newClientsThisMonth'
+        ));
+    }
     public function dashboard()
     {
         $todayResevations = Reservation::whereDate('created_at', Carbon::today())->get();
@@ -22,7 +47,7 @@ class AdminController
         $pendingCount = Reservation::where('status', 'pending')->count();
         $Revenus = Order::where('status', 'completed')->sum('Total_Price');
         $DayBestPlats = MenuItem::withSum(['orders as total_quantity' => function ($query) {
-            $query->whereDate('Order.created_at', Carbon::today());
+            $query->whereDate('orders.created_at', Carbon::today());
         }], 'order_menu_item.quantity')
             ->orderByDesc('total_quantity')
             ->get();

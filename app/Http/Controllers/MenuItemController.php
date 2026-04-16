@@ -79,7 +79,7 @@ class MenuItemController extends Controller
     public function edit($id)
     {
         $item = MenuItem::findOrFail($id);
-        return view('admin.menu.edit', compact('item'));
+        return view('Shered.Menu', compact('item'));
     }
 
     public function update(Request $request, $id)

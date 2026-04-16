@@ -13,7 +13,7 @@ use Illuminate\Routing\RouteUri;
 use Illuminate\View\View;
 use App\Http\Controllers\Auth\SocialController;
 use App\Http\Controllers\Auth\AuthController;
-
+use Stripe\ApiOperations\Update;
 
 Route::get('/auth/google', [SocialController::class, 'redirect']);
 Route::get('/auth/google/callback', [SocialController::class, 'callback']);
@@ -38,6 +38,7 @@ Route::middleware(['auth', 'admin',])->group(function () {
     Route::get('Add/Item', function () {
         return View('Admin.addProduit');
     })->name('AddItem');
+
     Route::get('/Items', [MenuItemController::class, 'show'])->name('show_items');
     Route::get('/Reservations', [AdminController::class, 'ShowReservationsPage'])->name('admin.reservations');
     Route::get('/Infos', [AdminController::class, 'ShowRestaurantInfo'])->name('Restaurant_Info');
@@ -46,10 +47,16 @@ Route::middleware(['auth', 'admin',])->group(function () {
     Route::get('/reservation/delete/{id}', [ReservationController::class, 'delete'])->name('admin.reservation.delete');
     Route::get('/Orders', [OrderController::class, 'Show'])->name('admin.orders');
     // gestion menu 
-    Route::get('{id}/edit', [MenuItemController::class, 'edit'])->name('menu.edit');
-    Route::put('{id}', [MenuItemController::class, 'update'])->name('update');
-    Route::delete('{id}', [MenuItemController::class, 'destroy'])->name('menu.destroy');
-    Route::post('{id}/toggle', [MenuItemController::class, 'toggle'])->name('menu.toggle');
+    Route::prefix('/menu')->group(function () {
+        Route::get('{id}/edit', [MenuItemController::class, 'edit'])->name('menu.edit');
+        Route::put('{id}', [MenuItemController::class, 'update'])->name('update');
+        Route::delete('{id}', [MenuItemController::class, 'destroy'])->name('menu.destroy');
+        Route::post('{id}/toggle', [MenuItemController::class, 'toggle'])->name('menu.toggle');
+    });
+    Route::post('/Status/Update/{id}', [OrderController::class, 'Update_Status']);
+
+    Route::get('/clients',[AdminController::class, 'index'])->name('clients');
+
 });
 
 Route::middleware(['auth', 'role:customer,waiter,cooker'])->group(function () {
@@ -61,4 +68,18 @@ Route::middleware(['auth', 'role:customer,waiter,cooker'])->group(function () {
     Route::post('/order/payment-intent', [OrderController::class, 'createPaymentIntent']);
     Route::post('/order/store', [OrderController::class, 'store']);
     Route::get('/menu', [MenuItemController::class, 'show'])->name('menu');
+    Route::get('/Panier', [OrderController::class, 'ShowPanier'])->name('Client.Panier');
+    Route::delete('/orders/{id}', [OrderController::class, 'destroy']);
+
+
+
+    Route::get(
+        '/client/mes-reservations',
+        [ReservationController::class, 'index']
+    )->name('client.reservations');
+
+    Route::patch(
+        '/client/reservations/{reservation}/cancel',
+        [ReservationController::class, 'canceled']
+    )->name('client.reservations.cancel');
 });
