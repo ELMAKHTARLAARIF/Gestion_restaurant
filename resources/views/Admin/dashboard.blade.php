@@ -134,26 +134,7 @@
   <div class="grid grid-cols-3 gap-6 fade-up">
 
     <!-- Table plan -->
-    <div class="bg-s1 border border-gold/[.1]">
-      <div class="flex items-center justify-between px-6 py-4 border-b border-gold/[.1]">
-        <span class="text-[11px] tracking-[.2em] uppercase text-cream/40">Plan des tables</span>
-        <span class="text-[11px] tracking-[.15em] uppercase text-gold/80 cursor-pointer hover:text-gold">Modifier</span>
-      </div>
-      <div class="p-5">
-        <div id="tablesGrid" class="grid grid-cols-6 gap-1.5"></div>
-        <div class="flex gap-5 mt-4">
-          <div class="flex items-center gap-1.5 text-[10px] text-cream/40">
-            <div class="w-2 h-2 rounded-full bg-gold"></div>Occupée
-          </div>
-          <div class="flex items-center gap-1.5 text-[10px] text-cream/40">
-            <div class="w-2 h-2 rounded-full bg-cblue"></div>Réservée
-          </div>
-          <div class="flex items-center gap-1.5 text-[10px] text-cream/40">
-            <div class="w-2 h-2 rounded-full bg-cgreen"></div>Libre
-          </div>
-        </div>
-      </div>
-    </div>
+
 
     <!-- Top dishes -->
     <div class="bg-s1 border border-gold/[.1]">
@@ -185,55 +166,19 @@
     <!-- Donut + Quick -->
     <div class="flex flex-col gap-5">
       <!-- Donut -->
-      <div class="bg-s1 border border-gold/[.1] flex-1">
-        <div class="px-6 py-4 border-b border-gold/[.1]">
-          <span class="text-[11px] tracking-[.2em] uppercase text-cream/40">Répartition revenus</span>
-        </div>
-        <div class="p-5">
-          <div class="relative h-36 flex items-center justify-center">
-            <canvas id="donutChart" width="140" height="140"></canvas>
-            <div class="absolute text-center pointer-events-none">
-              <div class="font-display text-xl text-gold">8 420</div>
-              <div class="text-[9px] tracking-[.2em] uppercase text-cream/35">MAD total</div>
-            </div>
-          </div>
-          <div class="mt-4 space-y-2">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2 text-[11px] text-cream/40">
-                <div class="w-2 h-2 bg-gold"></div>Plats
-              </div><span class="text-[11px] text-cream">54%</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2 text-[11px] text-cream/40">
-                <div class="w-2 h-2 bg-cblue"></div>Boissons
-              </div><span class="text-[11px] text-cream">28%</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2 text-[11px] text-cream/40">
-                <div class="w-2 h-2 bg-cgreen"></div>Desserts
-              </div><span class="text-[11px] text-cream">18%</span>
-            </div>
-          </div>
-        </div>
-      </div>
+
       <!-- Quick actions -->
       <div class="bg-s1 border border-gold/[.1]">
         <div class="px-6 py-4 border-b border-gold/[.1]">
           <span class="text-[11px] tracking-[.2em] uppercase text-cream/40">Actions rapides</span>
         </div>
         <div class="p-4 grid grid-cols-2 gap-2">
-          <button class="p-3 border border-gold/[.1] text-left hover:bg-gold/[.06] hover:border-gold/30 transition-all flex flex-col gap-1">
+          <a href="{{route('admin.reservations')}}" class="p-3 border border-gold/[.1] text-left hover:bg-gold/[.06] hover:border-gold/30 transition-all flex flex-col gap-1">
             <span class="text-base">🗓</span><span class="text-[11px] text-cream tracking-wide">Réservation</span><span class="text-[10px] text-cream/35">Ajouter</span>
-          </button>
-          <button class="p-3 border border-gold/[.1] text-left hover:bg-gold/[.06] hover:border-gold/30 transition-all flex flex-col gap-1">
+          </a>
+          <a href="{{route('admin.orders')}}" class="p-3 border border-gold/[.1] text-left hover:bg-gold/[.06] hover:border-gold/30 transition-all flex flex-col gap-1">
             <span class="text-base">🍽</span><span class="text-[11px] text-cream tracking-wide">Commande</span><span class="text-[10px] text-cream/35">Nouvelle</span>
-          </button>
-          <button onclick="window.location.href='add-item.html'" class="p-3 border border-gold/[.1] text-left hover:bg-gold/[.06] hover:border-gold/30 transition-all flex flex-col gap-1">
-            <span class="text-base">📋</span><span class="text-[11px] text-cream tracking-wide">Item Menu</span><span class="text-[10px] text-cream/35">Ajouter</span>
-          </button>
-          <button class="p-3 border border-gold/[.1] text-left hover:bg-gold/[.06] hover:border-gold/30 transition-all flex flex-col gap-1">
-            <span class="text-base">📤</span><span class="text-[11px] text-cream tracking-wide">Rapport</span><span class="text-[10px] text-cream/35">Exporter</span>
-          </button>
+          </a>
         </div>
       </div>
     </div>

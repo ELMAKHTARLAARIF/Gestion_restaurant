@@ -31,15 +31,15 @@ document.addEventListener('DOMContentLoaded', function () {
   // 📄 Page switching
   // ─────────────────────────────
   const titles = {
-    dashboard:    'Tableau de <em class="italic text-gold">bord</em>',
+    dashboard: 'Tableau de <em class="italic text-gold">bord</em>',
     reservations: 'Réser<em class="italic text-gold">vations</em>',
-    orders:       'Com<em class="italic text-gold">mandes</em>',
-    menu:         'Menu & <em class="italic text-gold">Carte</em>',
-    tables:       '<em class="italic text-gold">Tables</em>',
-    clients:      '<em class="italic text-gold">Clients</em>',
-    staff:        'Person<em class="italic text-gold">nel</em>',
-    analytics:    '<em class="italic text-gold">Analytique</em>',
-    settings:     'Para<em class="italic text-gold">mètres</em>',
+    orders: 'Com<em class="italic text-gold">mandes</em>',
+    menu: 'Menu & <em class="italic text-gold">Carte</em>',
+    tables: '<em class="italic text-gold">Tables</em>',
+    clients: '<em class="italic text-gold">Clients</em>',
+    staff: 'Person<em class="italic text-gold">nel</em>',
+    analytics: '<em class="italic text-gold">Analytique</em>',
+    settings: 'Para<em class="italic text-gold">mètres</em>',
   };
 
   window.setPage = function (name, el) {
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   // ─────────────────────────────
-  // 🔔 Notifications panel (FIXED)
+  //  Notifications panel (FIXED)
   // ─────────────────────────────
   const notifPanel = document.getElementById('notifPanel');
 
@@ -94,97 +94,46 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // ─────────────────────────────
-  // 🖥 Fullscreen
+  //  Fullscreen
   // ─────────────────────────────
   window.toggleFS = function () {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(() => {});
+      document.documentElement.requestFullscreen().catch(() => { });
     } else {
       document.exitFullscreen();
     }
   };
 
-  // ─────────────────────────────
-  // 🪑 Tables grid
-  // ─────────────────────────────
-  const tablesGrid = document.getElementById('tablesGrid');
 
-  if (tablesGrid) {
-    const states = [
-      'occupied','occupied','free','reserved','occupied','free',
-      'free','occupied','reserved','free','occupied','occupied',
-      'reserved','free','free','occupied','free','reserved',
-      'occupied','free','occupied','reserved','free','free'
-    ];
 
-    const seats = [
-      2,4,2,4,6,2,4,4,2,6,4,2,
-      4,2,4,6,2,4,4,2,4,2,6,4
-    ];
+  fetch('/dashboard/chart-data')
+    .then(res => res.json())
+    .then(data => {
 
-    const colorMap = {
-      occupied: 'border-gold/35 bg-gold/[.08] text-gold',
-      reserved: 'border-cblue/35 bg-cblue/[.08] text-cblue',
-      free:     'border-cgreen/20 bg-cgreen/[.05] text-cgreen',
-    };
+      const revenueData = data.revenue;
+      const revenueLabels = data.labels;
 
-    const stateArr = [...states];
+      const canvas = document.getElementById('revenueChart');
 
-    states.forEach((s, i) => {
-      const el = document.createElement('div');
-
-      el.className = `
-        aspect-square border flex flex-col items-center justify-center
-        gap-0.5 cursor-pointer transition-all ${colorMap[s]}
-      `;
-
-      el.innerHTML = `
-        <div class="font-display text-sm">${i + 1}</div>
-        <div class="text-[9px] text-cream/35">${seats[i]}p</div>
-      `;
-
-      el.addEventListener('click', () => {
-        const order = ['free', 'occupied', 'reserved'];
-
-        stateArr[i] = order[(order.indexOf(stateArr[i]) + 1) % 3];
-
-        el.className = `
-          aspect-square border flex flex-col items-center justify-center
-          gap-0.5 cursor-pointer transition-all ${colorMap[stateArr[i]]}
-        `;
+      new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: revenueLabels,
+          datasets: [{
+            data: revenueData,
+            backgroundColor: 'rgba(200,169,110,.3)',
+            borderColor: 'rgba(200,169,110,.4)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } }
+        }
       });
 
-      tablesGrid.appendChild(el);
     });
-  }
-
-  // ─────────────────────────────
-  // 📊 Revenue chart
-  // ─────────────────────────────
-  const revenueCanvas = document.getElementById('revenueChart');
-
-  if (revenueCanvas && typeof Chart !== 'undefined') {
-    new Chart(revenueCanvas.getContext('2d'), {
-      type: 'bar',
-      data: {
-        labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Auj'],
-        datasets: [{
-          data: [6200, 7100, 5800, 8400, 9200, 11500, 8420],
-          backgroundColor: (ctx) =>
-            ctx.dataIndex === 6
-              ? 'rgba(200,169,110,.85)'
-              : 'rgba(200,169,110,.16)',
-          borderColor: 'rgba(200,169,110,.4)',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } }
-      }
-    });
-  }
 
   // ─────────────────────────────
   // 🍩 Donut chart
@@ -218,63 +167,54 @@ document.addEventListener('DOMContentLoaded', function () {
 // add produit
 
 
-    function handleFile(input) {
-        const file = input.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = e => {
-            document.getElementById('imagePreview').src = e.target.result;
-            document.getElementById('imgName').textContent = file.name;
-            document.getElementById('imgSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
-            const wrap = document.getElementById('imagePreviewWrap');
-            wrap.style.display = 'flex';
-        };
-        reader.readAsDataURL(file);
-    }
+function handleFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('imagePreview').src = e.target.result;
+    document.getElementById('imgName').textContent = file.name;
+    document.getElementById('imgSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+    const wrap = document.getElementById('imagePreviewWrap');
+    wrap.style.display = 'flex';
+  };
+  reader.readAsDataURL(file);
+}
 
-    function handleDrop(e) {
-        e.preventDefault();
-        document.getElementById('dropZone').classList.remove('drag-over');
-        const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith('image/')) {
-            const dt = new DataTransfer();
-            dt.items.add(file);
-            document.getElementById('fileInput').files = dt.files;
-            handleFile(document.getElementById('fileInput'));
-        }
-    }
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropZone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    document.getElementById('fileInput').files = dt.files;
+    handleFile(document.getElementById('fileInput'));
+  }
+}
 
-    function removeImage() {
-        document.getElementById('fileInput').value = '';
-        document.getElementById('imagePreviewWrap').style.display = 'none';
-        document.getElementById('imagePreview').src = '';
-    }
-
-
-
-
-
-
-
-
-
+function removeImage() {
+  document.getElementById('fileInput').value = '';
+  document.getElementById('imagePreviewWrap').style.display = 'none';
+  document.getElementById('imagePreview').src = '';
+}
 
 
 const btn = document.getElementById("themeToggle");
 
 btn.addEventListener("click", () => {
-    document.body.classList.toggle("light-theme");
+  document.body.classList.toggle("light-theme");
 
-    localStorage.setItem(
-        "theme",
-        document.body.classList.contains("light-theme") ? "light" : "dark"
-    );
+  localStorage.setItem(
+    "theme",
+    document.body.classList.contains("light-theme") ? "light" : "dark"
+  );
 });
 
 window.addEventListener("load", () => {
-    if (localStorage.getItem("theme") === "light") {
-        document.body.classList.add("light-theme");
-    }
+  if (localStorage.getItem("theme") === "light") {
+    document.body.classList.add("light-theme");
+  }
 });
 
 

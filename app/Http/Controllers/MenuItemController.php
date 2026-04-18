@@ -79,15 +79,43 @@ class MenuItemController extends Controller
     public function edit($id)
     {
         $item = MenuItem::findOrFail($id);
-        return view('Shered.Menu', compact('item'));
+        $category = $item->category;
+        return view('Admin.Edit_Produit', compact('item','category'));
     }
 
-    public function update(Request $request, $id)
-    {
-        $item = MenuItem::findOrFail($id);
-        $item->update($request->all()); // you can add validation here
-        return redirect()->back()->with('success', 'Item updated.');
+public function update(Request $request, $id)
+{
+    $item = MenuItem::findOrFail($id);
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'category_id' => 'required|exists:MenuCategory,id',
+        'description' => 'required|string|max:200',
+        'prix' => 'required|numeric|min:0',
+        'temp_prepa' => 'required|integer|min:0|max:600',
+        'status' => 'nullable|string|in:disponible,Temporairement indisponible',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+    ]);
+
+    if ($request->has('remove_image') && $request->remove_image == 1) {
+        if ($item->image && \Storage::disk('public')->exists($item->image)) {
+            \Storage::disk('public')->delete($item->image);
+        }
+        $validated['image'] = null;
     }
+
+    if ($request->hasFile('image')) {
+        // delete old image
+        if ($item->image && \Storage::disk('public')->exists($item->image)) {
+            \Storage::disk('public')->delete($item->image);
+        }
+
+        $validated['image'] = $request->file('image')->store('menu_items', 'public');
+    }
+
+    $item->update($validated);
+
+    return redirect()->back()->with('success', 'Item updated successfully.');
+}
 
     public function destroy($id)
     {

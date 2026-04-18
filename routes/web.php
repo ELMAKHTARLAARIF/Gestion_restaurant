@@ -3,6 +3,8 @@
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Geust\GeustController;
+
 use App\Http\Controllers\MenuItemController;
 
 use PHPUnit\Framework\MockObject\Generator\MockClass;
@@ -17,8 +19,8 @@ use Stripe\ApiOperations\Update;
 
 Route::get('/auth/google', [SocialController::class, 'redirect']);
 Route::get('/auth/google/callback', [SocialController::class, 'callback']);
-
-Route::get('/', function () {
+Route::get('/',[GeustController::class,'guest'])->name('guest');
+Route::get('/user/login', function () {
     return view('Auth.login');
 })->name('login');
 Route::get('signup', function () {
@@ -35,6 +37,7 @@ Route::middleware(['auth', 'admin',])->group(function () {
     Route::post('/Product/create', [MenuItemController::class, 'create'])->name('create');
 
     Route::get('/Dashboard', [AdminController::class, 'dashboard'])->name('Dashboard');
+    Route::get('/dashboard/chart-data', [AdminController::class, 'chartData']);
     Route::get('Add/Item', function () {
         return View('Admin.addProduit');
     })->name('AddItem');
@@ -44,7 +47,7 @@ Route::middleware(['auth', 'admin',])->group(function () {
     Route::get('/Infos', [AdminController::class, 'ShowRestaurantInfo'])->name('Restaurant_Info');
     Route::get('/reservation/accept/{id}', [ReservationController::class, 'accept'])->name('admin.reservation.accept');
     Route::get('/reservation/cancel/{id}', [ReservationController::class, 'cancel'])->name('admin.reservations.cancel');
-    Route::get('/reservation/delete/{id}', [ReservationController::class, 'delete'])->name('admin.reservation.delete');
+    Route::get('/reservation/delete/{id}', [AdminController::class, 'delete'])->name('admin.reservation.delete');
     Route::get('/Orders', [OrderController::class, 'Show'])->name('admin.orders');
     // gestion menu 
     Route::prefix('/menu')->group(function () {
@@ -56,11 +59,16 @@ Route::middleware(['auth', 'admin',])->group(function () {
     Route::post('/Status/Update/{id}', [OrderController::class, 'Update_Status']);
 
     Route::get('/clients',[AdminController::class, 'index'])->name('clients');
+    Route::post('/admin/users/{id}/activate', [AdminController::class, 'activate']);
+Route::post('/admin/users/{id}/inactive', [AdminController::class, 'inactive']);
+Route::post('/admin/users/{id}/block', [AdminController::class, 'block']);
+Route::delete('/admin/users/{id}', [AdminController::class, 'destroy']);
 
 });
 
 Route::middleware(['auth', 'role:customer,waiter,cooker'])->group(function () {
     Route::get('/reservation', [ReservationController::class, 'ShowReservationForm'])->name('reservation');
+    Route::post('/reservation/panier/{id}',[ReservationController::class,'delete'])->name('reservation.panier.cancel');
     Route::post('/reservation/create', [ReservationController::class, 'MakeReservation'])->name('reservation_create');
 
     Route::post('/contact', [ContactMessageController::class, 'Send'])->name('contact');
@@ -78,8 +86,4 @@ Route::middleware(['auth', 'role:customer,waiter,cooker'])->group(function () {
         [ReservationController::class, 'index']
     )->name('client.reservations');
 
-    Route::patch(
-        '/client/reservations/{reservation}/cancel',
-        [ReservationController::class, 'canceled']
-    )->name('client.reservations.cancel');
 });

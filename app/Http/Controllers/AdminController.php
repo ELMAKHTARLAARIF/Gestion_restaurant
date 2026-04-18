@@ -36,8 +36,31 @@ class AdminController
             'newClientsThisMonth'
         ));
     }
+    public function chartData()
+    {
+        $last7Days = collect();
+        $labels = collect();
+
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::today()->subDays($i);
+
+            $labels->push($date->format('D'));
+
+            $last7Days->push(
+                Order::where('status', 'completed')
+                    ->whereDate('order_date', $date)
+                    ->sum('Total_Price')
+            );
+        }
+
+        return response()->json([
+            'labels' => $labels,
+            'revenue' => $last7Days,
+        ]);
+    }
     public function dashboard()
     {
+
         $todayResevations = Reservation::whereDate('created_at', Carbon::today())->get();
 
         $todayCount = Reservation::whereDate('created_at', Carbon::today())->count();
@@ -58,7 +81,16 @@ class AdminController
             ->take(10)
             ->get();
 
-        return view('Admin.dashboard', compact('todayResevations', 'reservations', 'todayCount', 'yesterdayCount', 'pendingCount', 'trend', 'DayBestPlats', 'Revenus'));
+        return view('Admin.dashboard', compact(
+            'todayResevations',
+            'reservations',
+            'todayCount',
+            'yesterdayCount',
+            'pendingCount',
+            'trend',
+            'DayBestPlats',
+            'Revenus'
+        ));
     }
     public function ShowReservationsPage()
     {
@@ -77,5 +109,42 @@ class AdminController
     public function ShowRestaurantInfo()
     {
         return view('Admin.Info_Rest');
+    }
+
+    public function delete($id)
+    {
+        $delete = Reservation::find($id);
+        $delete->delete();
+        if (!$delete) {
+            return redirect()->route('admin.reservations')->with('error', 'Failed to delete reservation');
+        }
+        return redirect()->route('admin.reservations')->with('success', 'Reservation deleted');
+    }
+
+
+    public function activate($id)
+    {
+        $user = User::findOrFail($id);
+        $user->status = 'active';
+        $user->save();
+    }
+
+    public function inactive($id)
+    {
+        $user = User::findOrFail($id);
+        $user->status = 'inactive';
+        $user->save();
+    }
+
+    public function block($id)
+    {
+        $user = User::findOrFail($id);
+        $user->status = 'blocked';
+        $user->save();
+    }
+
+    public function destroy($id)
+    {
+        User::findOrFail($id)->delete();
     }
 }

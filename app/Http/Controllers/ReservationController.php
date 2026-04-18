@@ -26,11 +26,24 @@ class ReservationController extends Controller
         $total = $reservations->whereIn('status', ['pending', 'accepted'])->count();
         $confirmed = $reservations->where('status', 'accepted')->count();
         $pending = $reservations->where('status', 'pending')->count();
-        $historic = $reservations->whereIn('status',['canclled','complete','']);
+        $historic = $reservations->whereIn('status', ['cancelled', 'completed', '']);
 
-        return view('CLient.ResevationPanier', compact('reservations','total','confirmed','pending','historic'));
+        return view('CLient.ResevationPanier', compact('reservations', 'total', 'confirmed', 'pending', 'historic'));
     }
+    public function delete($id)
+    {
+        $delete = Reservation::find($id);
 
+        if (!$delete) {
+            return redirect()->route('client.reservations')
+                ->with('error', 'Reservation not found');
+        }
+
+        $delete->delete();
+
+        return redirect()->route('client.reservations')
+            ->with('success', 'Reservation deleted');
+    }
     public function ShowReservationForm()
     {
 
@@ -49,7 +62,6 @@ class ReservationController extends Controller
         event(new ReservationCreated($result['reservation']));
 
         return redirect()->back()->with('success', 'Reservation created');
-
     }
 
     public function accept($id)
@@ -75,14 +87,5 @@ class ReservationController extends Controller
         }
 
         return redirect()->route('admin.reservations')->with('success', 'Reservation canceled');
-    }
-    public function delete($id)
-    {
-        $delete = Reservation::find($id);
-        $delete->delete();
-        if (!$delete) {
-            return redirect()->route('admin.reservations')->with('error', 'Failed to delete reservation');
-        }
-        return redirect()->route('admin.reservations')->with('success', 'Reservation deleted');
     }
 }

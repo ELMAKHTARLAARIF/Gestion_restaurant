@@ -75,13 +75,10 @@
             <a href="{{route('AddItem')}}">
                 <div class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="window.location.href='add-item.html'">
                     <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">＋</span>
-                    <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Items</span>
+                    <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Produit</span>
                 </div>
             </a>
-            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="setPage('tables',this)">
-                <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">🪑</span>
-                <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Tables</span>
-            </a>
+
 
             <div class="nav-label-text mt-4 px-6 pb-2 text-[9px] tracking-[.3em] uppercase text-cream/20 whitespace-nowrap transition-opacity">Gestion</div>
             <a href="{{route('show_items')}}" class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">

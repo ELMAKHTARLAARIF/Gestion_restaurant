@@ -9,6 +9,7 @@ use Stripe\Stripe;
 use Stripe\PaymentIntent;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
+use Tymon\JWTAuth\Http\Parser\AuthHeaders;
 
 class OrderController extends Controller
 {
@@ -149,7 +150,16 @@ class OrderController extends Controller
     }
     public function ShowPanier()
     {
-        $orders = Order::with(['customer', 'items.menuItem'])->get();;
-        return View('CLient.Panier', compact('orders'));
+        $customer = Auth::user(); // or however your auth->customer relation works
+
+        $orders = Order::with(['items.menuItem'])
+            ->where('user_id', $customer->id)
+            ->latest()
+            ->get();
+
+        $activeOrder = $orders->whereIn('status', ['pending', 'confirmed', 'preparing', 'in_progress'])->first();
+        $pastOrders  = $orders->whereIn('status', ['completed', 'delivered', 'cancelled']);
+
+        return view('CLient.Panier', compact('activeOrder', 'pastOrders'));
     }
 }
