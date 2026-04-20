@@ -364,7 +364,7 @@ async function confirmPay() {
 
     if (!dataOrder.success) throw new Error(dataOrder.message || 'Erreur lors de la commande');
       let success_border = document.getElementById('payModal');
-    alert(" Commande passée : " + dataOrder.order_ref);
+    alert(" Commande Passée Check Your Email For More Details : " + dataOrder.order_ref);
 
   } catch (e) {
     console.error(e);

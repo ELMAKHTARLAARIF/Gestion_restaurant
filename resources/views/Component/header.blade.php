@@ -101,10 +101,10 @@
 
         <!-- User -->
         <div class="flex items-center gap-3 px-5 py-4 border-t border-gold/[.12]">
-            <div class="w-8 h-8 bg-gold/10 border border-gold/25 flex items-center justify-center text-[10px] text-gold flex-shrink-0">MK</div>
+            <div class="w-8 h-8 bg-gold/10 border border-gold/25 flex items-center justify-center text-[10px] text-gold flex-shrink-0">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
             <div class="hide-collapsed overflow-hidden">
-                <div class="text-[12px] text-cream whitespace-nowrap">Laarif</div>
-                <div class="text-[10px] text-cream/40">Administrateur</div>
+                <div class="text-[12px] text-cream whitespace-nowrap">{{Auth::user()->name}}</div>
+                <div class="text-[10px] text-cream/40">{{Auth::user()->role->name}}</div>
             </div>
         </div>
     </aside>

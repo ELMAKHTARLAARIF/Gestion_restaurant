@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateOrderRequest;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
@@ -10,6 +11,8 @@ use Stripe\PaymentIntent;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 use Tymon\JWTAuth\Http\Parser\AuthHeaders;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderCreatedMail;
 
 class OrderController extends Controller
 {
@@ -62,20 +65,9 @@ class OrderController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function store(CreateOrderRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'items'          => 'required|array|min:1',
-            'prenom'         => 'required|string',
-            'nom'            => 'required|string',
-            'email'          => 'required|email',
-            'telephone'      => 'required|string',
-            'payment_method' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
-        }
+        $validator = $request->validated();
 
         $totalPrice = collect($request->items)->sum(fn($i) => ($i['price'] ?? 0) * ($i['qty'] ?? 0));
         $quantity   = collect($request->items)->sum(fn($i) => $i['qty']);
@@ -119,7 +111,7 @@ class OrderController extends Controller
         }
 
         $orderRef = '#LM-' . date('Y') . '-' . str_pad($order->id, 4, '0', STR_PAD_LEFT);
-
+        Mail::to(Auth::user()->email)->send(new OrderCreatedMail($order));
         return response()->json([
             'success'   => true,
             'order_id'  => $order->id,
