@@ -10,7 +10,7 @@ use App\Models\MenuItem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route as FacadesRoute;
 use App\Http\Requests\CreateProduitRequest;
-
+use Illuminate\Support\Facades\Storage;
 use function PHPUnit\Framework\returnArgument;
 
 class MenuItemController extends Controller
@@ -78,44 +78,46 @@ class MenuItemController extends Controller
 
     public function edit($id)
     {
+        $item       = MenuItem::with('category', 'user')->findOrFail($id);
+        $categories = MenuCategory::orderBy('name')->get(); // FIX 3 : all categories
+
+        return view('Admin.Edit_Produit', compact('item', 'categories'));
+    }
+ 
+    public function update(Request $request, int $id)
+    {
         $item = MenuItem::findOrFail($id);
-        $category = $item->category;
-        return view('Admin.Edit_Produit', compact('item','category'));
-    }
-
-public function update(Request $request, $id)
-{
-    $item = MenuItem::findOrFail($id);
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'category_id' => 'required|exists:MenuCategory,id',
-        'description' => 'required|string|max:200',
-        'prix' => 'required|numeric|min:0',
-        'temp_prepa' => 'required|integer|min:0|max:600',
-        'status' => 'nullable|string|in:disponible,Temporairement indisponible',
-        'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
-    ]);
-
-    if ($request->has('remove_image') && $request->remove_image == 1) {
-        if ($item->image && \Storage::disk('public')->exists($item->image)) {
-            \Storage::disk('public')->delete($item->image);
+ 
+        $validated = $request->validate([
+            'name'        => 'required|string|max:255',
+            'category_id' => 'required|exists:MenuCategory,id',
+            'description' => 'required|string|max:200',
+            'prix'        => 'required|numeric|min:0',
+            'temp_prepa'  => 'nullable|integer|min:0|max:600',
+            'status'      => 'nullable|string|in:disponible,Temporairement indisponible',
+            'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+        ]);
+ 
+        // Replace image if a new file was uploaded
+        if ($request->hasFile('image')) {
+            if ($item->image && Storage::disk('public')->exists($item->image)) {
+                Storage::disk('public')->delete($item->image);
+            }
+            $item->image = $request->file('image')->store('menu_items', 'public');
         }
-        $validated['image'] = null;
+ 
+        $item->name        = $validated['name'];
+        $item->category_id = $validated['category_id'];
+        $item->description = $validated['description'];
+        $item->prix        = $validated['prix'];
+        $item->temp_prepa  = $validated['temp_prepa'] ?? null;
+        $item->status      = $validated['status'] ?? 'disponible';
+        $item->save();
+ 
+        return redirect()
+            ->route('show_items')
+            ->with('success', 'Modifications enregistrées avec succès.');
     }
-
-    if ($request->hasFile('image')) {
-        // delete old image
-        if ($item->image && \Storage::disk('public')->exists($item->image)) {
-            \Storage::disk('public')->delete($item->image);
-        }
-
-        $validated['image'] = $request->file('image')->store('menu_items', 'public');
-    }
-
-    $item->update($validated);
-
-    return redirect()->back()->with('success', 'Item updated successfully.');
-}
 
     public function destroy($id)
     {

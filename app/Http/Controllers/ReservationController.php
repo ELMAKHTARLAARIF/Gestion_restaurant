@@ -57,10 +57,7 @@ class ReservationController extends Controller
         if (!$result['success']) {
             return redirect()->route('reservation')->with('error', $result['message']);
         }
-
-        // Fire event
-        event(new ReservationCreated($result['reservation']));
-
+            
         return redirect()->back()->with('success', 'Reservation created');
     }
 

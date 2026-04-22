@@ -429,6 +429,22 @@
           alert('Error updating status');
         });
     }
+
+
+    ////search order by numero order
+function filterOrders() {
+    const value = document.getElementById('orderSearch').value.toLowerCase();
+
+    document.querySelectorAll('.order-card').forEach(card => {
+        const orderNumber = card.querySelector('.font-display')?.innerText?.toLowerCase() || '';
+        card.style.display = orderNumber.includes(value) ? '' : 'none';
+    });
+
+    document.querySelectorAll('.trow').forEach(row => {
+        const orderNumber = row.querySelector('.font-display')?.innerText?.toLowerCase() || '';
+        row.style.display = orderNumber.includes(value) ? '' : 'none';
+    });
+}
   </script>
 
 </body>

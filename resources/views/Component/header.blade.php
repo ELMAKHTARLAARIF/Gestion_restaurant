@@ -139,8 +139,5 @@
                 <button onclick="toggleFS()" class="w-9 h-9 border border-gold/[.12] flex items-center justify-center text-cream/40 hover:border-gold/35 hover:text-gold transition-all text-sm">⛶</button>
                 <a href="{{ route('logout') }}" rel="noopener noreferrer" class="w-9 h-9 border border-gold/[.12] flex items-center justify-center text-cream/40 hover:border-gold/35 hover:text-gold transition-all text-sm">⏻</a>
             </div>
-            <button id="themeToggle" class="toggle-btn">
-                Toggle Theme
-            </button>
             <div id="topDate" class="text-[11px] text-cream/35 pl-3 border-l border-gold/[.1]"></div>
         </header>

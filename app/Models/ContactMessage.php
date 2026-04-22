@@ -10,5 +10,10 @@ class ContactMessage extends Model
     /** @use HasFactory<\Database\Factories\ContactMessageFactory> */
     use HasFactory;
     protected $table = "ContactMessage";
-    protected $fillable = ['Message_Content','user_id',];
+    protected $fillable = [
+        'name',
+        'email',
+        'Message_Content',
+        'user_id',
+    ];
 }

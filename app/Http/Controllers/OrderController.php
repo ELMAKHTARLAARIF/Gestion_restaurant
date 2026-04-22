@@ -102,7 +102,7 @@ class OrderController extends Controller
             'stripe_payment_intent' => $request->stripe_payment_intent ?? null,
             'order_date'            => now(),
             'status'                => $status,
-            'N°_commande' => 'CMD-' . str_pad(Auth::id(), 6, '0', STR_PAD_LEFT)
+            'N°_commande' => 'CMD-' . now()->format('YmdHis') . '-' . Auth::id(),
         ]);
         foreach ($request->items as $i) {
             $order->items()->create([

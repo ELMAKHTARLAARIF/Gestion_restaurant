@@ -46,12 +46,6 @@
             </form>
 
             <!-- Toggle visibility -->
-            <form action="{{ route('menu.toggle', $item->id) }}" method="POST">
-              @csrf
-              <button type="submit" class="px-2 py-1 bg-yellow-500 text-dark text-[10px] rounded hover:bg-yellow-600">
-                {{ $item->status === 'active' ? 'Hide' : 'Show' }}
-              </button>
-            </form>
           </div>
         </div>
         @endforeach

@@ -13,10 +13,10 @@
         @include('Component.HandleMessages')
     </div>
 
-    <!-- Search -->
+    <!-- Search -->     
     <div class="hidden md:flex items-center gap-2 bg-s2 border border-gold/[.1] px-3 py-1.5 w-48 animate-fu2">
       <svg class="w-3.5 h-3.5 text-cream/22 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-      <input type="text" placeholder="Client, table, #ID…" class="bg-transparent border-0 text-[11px] text-cream placeholder-cream/18 w-full font-body"/>
+      <input placeholder="N° commande…" id="orderSearch" oninput="filterOrders()" type="text" placeholder="Client, table, #ID…" class="bg-transparent border-0 text-[11px] text-cream placeholder-cream/18 w-full font-body"/>
     </div>
 
     <!-- View toggle -->

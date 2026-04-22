@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('ContactMessage', function (Blueprint $table) {
             $table->id();
             $table->string('Message_Content');
-            $table->foreignId('Order_id')->constrained('Order');
-            $table->foreignId('Item_id')->constrained('MenuItem');
             $table->foreignId('user_id')->constrained('users');
             
             $table->timestamps();

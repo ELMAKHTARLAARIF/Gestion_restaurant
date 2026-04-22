@@ -1,37 +1,63 @@
 <div class="flex-1 overflow-y-auto content-scroll">
     <div class="p-8 max-w-[1200px] mx-auto">
+
         {{-- Success Message --}}
         @if(session('success'))
         <div id="flash-message-success"
-             class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 transition-opacity duration-500 ease-out"
-             role="alert">
-            <strong>Success!</strong> {{ session('success') }}
+             class="mb-4 px-5 py-4 border border-gold/30 bg-s1 text-gold text-[12px] tracking-wide flex items-center gap-3 transition-opacity duration-500">
+            
+            <div class="w-8 h-8 border border-gold/30 flex items-center justify-center text-gold text-sm">
+                ✓
+            </div>
+
+            <div>
+                <div class="uppercase text-[10px] tracking-[.2em] text-gold/70 mb-1">Success</div>
+                <div class="text-cream/80">
+                    {{ session('success') }}
+                </div>
+            </div>
         </div>
         @endif
+
 
         {{-- Error Message --}}
         @if(session('error'))
         <div id="flash-message-error"
-             class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 transition-opacity duration-500 ease-out"
-             role="alert">
-            <strong>Error!</strong> {{ session('error') }}
+             class="mb-4 px-5 py-4 border border-cred/40 bg-s1 text-cred text-[12px] tracking-wide flex items-center gap-3 transition-opacity duration-500">
+
+            <div class="w-8 h-8 border border-cred/40 flex items-center justify-center text-cred text-sm">
+                ✕
+            </div>
+
+            <div>
+                <div class="uppercase text-[10px] tracking-[.2em] text-cred/70 mb-1">Error</div>
+                <div class="text-cream/80">
+                    {{ session('error') }}
+                </div>
+            </div>
         </div>
         @endif
+
 
         {{-- Validation Errors --}}
         @if($errors->any())
         <div id="flash-message-validation"
-             class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 transition-opacity duration-500 ease-out">
-            <ul class="list-disc pl-5">
+             class="mb-4 px-5 py-4 border border-cred/40 bg-s1 text-cred text-[12px] tracking-wide">
+
+            <div class="uppercase text-[10px] tracking-[.2em] text-cred/70 mb-2">
+                Validation Error
+            </div>
+
+            <ul class="list-disc pl-5 text-cream/70 space-y-1">
                 @foreach($errors->all() as $error)
                 <li>{{ $error }}</li>
                 @endforeach
             </ul>
         </div>
         @endif
+
     </div>
 </div>
-
 <script>
     function fadeOut(el, duration = 500) {
         el.style.transition = `opacity ${duration}ms ease`;
@@ -43,7 +69,6 @@
         }, duration);
     }
 
-    // Wait 5 seconds and fade out messages
     setTimeout(() => {
         const success = document.getElementById('flash-message-success');
         const error = document.getElementById('flash-message-error');
