@@ -232,38 +232,25 @@
                   {{ $reservation->numberOfPeople ?? 'N/A' }} pers.
                 </div>
               </td>
-              
+
 
               <td class="px-4 py-4">
                 @if($reservation->status === 'accepted')
-                 <span class="badge b-confirmed"><span class="badge-dot"></span>Confirmée</span>
+                <span class="badge b-confirmed"><span class="badge-dot"></span>Confirmée</span>
                 @elseif($reservation->status === 'pending')
-                 <span class="badge b-pending"><span class="badge-dot"></span>En attente</span>
+                <span class="badge b-pending"><span class="badge-dot"></span>En attente</span>
                 @elseif($reservation->status === 'cancelled')
-                 <span class="badge b-cancelled"><span class="badge-dot"></span>Annulée</span>
+                <span class="badge b-cancelled"><span class="badge-dot"></span>Annulée</span>
                 @elseif($reservation->status === 'completed')
-                 <span class="badge b-completed"><span class="badge-dot"></span>Terminée</span>
+                <span class="badge b-completed"><span class="badge-dot"></span>Terminée</span>
                 @else
-                 <span class="text-[11px] text-cream/30">Statut inconnu</span>
+                <span class="text-[11px] text-cream/30">Statut inconnu</span>
                 @endif
               </td>
               <td class="px-4 py-4 hidden xl:table-cell text-[11px] text-cream/30 max-w-[160px] truncate">{{ $reservation->special_requests ?? 'Aucune demande' }}</td>
               <td class="px-6 py-4">
                 <div class="row-actions flex items-center justify-end gap-1.5">
-                  <button onclick="openView(
-  '{{ $reservation->id }}',
-  '{{ $reservation->customer->name }}',
-  '{{ $reservation->customer->phone }}',
-  '{{ $reservation->tableNumber}}',
-  '{{ $reservation->reservationDate }}',
-  '{{ $reservation->Hour }}',
-  '{{ $reservation->numberOfPeople}}',
-  '{{ $reservation->status}}',
-  '{{ $reservation->special_requests}}',
-  '{{ route('admin.reservation.accept', $reservation->id) }}',
-  '{{ route('admin.reservations.cancel', $reservation->id) }}',
-  '{{ route('admin.reservation.delete', $reservation->id) }}'
-)" title="Voir détails" class="act-btn act-view">
+                  <button data-reservation='@json($reservation)' onclick="openView(this)" title="Voir détails" class="act-btn act-view">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -308,11 +295,41 @@
         </div>
         <!-- Pagination -->
         <div class="flex items-center gap-1.5">
-          <button class="w-7 h-7 border border-gold/[.12] text-cream/30 hover:border-gold hover:text-gold transition-all text-xs flex items-center justify-center bg-transparent cursor-pointer">‹</button>
-          <span class="w-7 h-7 bg-gold text-ink text-[11px] font-semibold flex items-center justify-center">1</span>
-          <span class="w-7 h-7 border border-gold/[.12] text-cream/35 text-[11px] flex items-center justify-center cursor-pointer hover:border-gold hover:text-gold transition-all">2</span>
-          <span class="w-7 h-7 border border-gold/[.12] text-cream/35 text-[11px] flex items-center justify-center cursor-pointer hover:border-gold hover:text-gold transition-all">3</span>
-          <button class="w-7 h-7 border border-gold/[.12] text-cream/30 hover:border-gold hover:text-gold transition-all text-xs flex items-center justify-center bg-transparent cursor-pointer">›</button>
+
+          {{-- Previous --}}
+          @if ($reservations->onFirstPage())
+          <button disabled class="w-7 h-7 border border-gold/[.12] text-cream/30 flex items-center justify-center">‹</button>
+          @else
+          <a href="{{ $reservations->previousPageUrl() }}"
+            class="w-7 h-7 border border-gold/[.12] flex items-center justify-center hover:border-gold hover:text-gold">
+            ‹
+          </a>
+          @endif
+
+
+          @foreach ($reservations->getUrlRange(1, $reservations->lastPage()) as $page => $url)
+          @if ($page == $reservations->currentPage())
+          <span class="w-7 h-7 bg-gold text-black text-[11px] font-semibold flex items-center justify-center">
+            {{ $page }}
+          </span>
+          @else
+          <a href="{{ $url }}"
+            class="w-7 h-7 border border-gold/[.12] text-cream/35 flex items-center justify-center hover:border-gold hover:text-gold">
+            {{ $page }}
+          </a>
+          @endif
+          @endforeach
+
+          {{-- Next --}}
+          @if ($reservations->hasMorePages())
+          <a href="{{ $reservations->nextPageUrl() }}"
+            class="w-7 h-7 border border-gold/[.12] flex items-center justify-center hover:border-gold hover:text-gold">
+            ›
+          </a>
+          @else
+          <button disabled class="w-7 h-7 border border-gold/[.12] text-cream/30 flex items-center justify-center">›</button>
+          @endif
+
         </div>
       </div>
     </div>
@@ -323,131 +340,6 @@
 </div><!-- /main -->
 
 
-<!-- ══════════════════════════════════════════
-     ADD RESERVATION MODAL
-══════════════════════════════════════════ -->
-<div id="addModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-4">
-  <div class="modal-bg absolute inset-0" onclick="this.closest('#addModal').classList.add('hidden');document.body.style.overflow=''"></div>
-  <div class="relative bg-s1 border border-gold/[.18] w-full max-w-lg shadow-2xl animate-scale-in overflow-y-auto" style="max-height:92vh">
-    <!-- Header -->
-    <div class="sticky top-0 bg-s1 border-b border-gold/[.1] flex items-center justify-between px-7 py-5 z-10">
-      <div>
-        <span class="block text-[9px] tracking-[.38em] uppercase text-gold mb-0.5">La Maison · Admin</span>
-        <h3 class="font-display text-[1.5rem] font-light">Nouvelle <em class="italic text-gold">réservation</em></h3>
-      </div>
-      <button onclick="document.getElementById('addModal').classList.add('hidden');document.body.style.overflow=''"
-        class="w-8 h-8 border border-gold/20 flex items-center justify-center text-cream/30 hover:text-gold hover:border-gold transition-all bg-transparent cursor-pointer text-base">✕</button>
-    </div>
-    <!-- Form -->
-    <div class="p-7 flex flex-col gap-4">
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-[9px] tracking-[.2em] uppercase text-cream/30 mb-1.5">Prénom *</label>
-          <input type="text" placeholder="Ahmed" class="w-full bg-s2 border border-gold/[.1] px-4 py-3 text-[13px] text-cream placeholder-cream/20 font-body" />
-        </div>
-        <div>
-          <label class="block text-[9px] tracking-[.2em] uppercase text-cream/30 mb-1.5">Nom *</label>
-          <input type="text" placeholder="Benali" class="w-full bg-s2 border border-gold/[.1] px-4 py-3 text-[13px] text-cream placeholder-cream/20 font-body" />
-        </div>
-      </div>
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-[9px] tracking-[.2em] uppercase text-cream/30 mb-1.5">Téléphone *</label>
-          <input type="tel" placeholder="+212 6XX XXX XXX" class="w-full bg-s2 border border-gold/[.1] px-4 py-3 text-[13px] text-cream placeholder-cream/20 font-body" />
-        </div>
-        <div>
-          <label class="block text-[9px] tracking-[.2em] uppercase text-cream/30 mb-1.5">Email</label>
-          <input type="email" placeholder="email@exemple.com" class="w-full bg-s2 border border-gold/[.1] px-4 py-3 text-[13px] text-cream placeholder-cream/20 font-body" />
-        </div>
-      </div>
-      <div class="grid grid-cols-3 gap-4">
-        <div>
-          <label class="block text-[9px] tracking-[.2em] uppercase text-cream/30 mb-1.5">Date *</label>
-          <input type="date" class="w-full bg-s2 border border-gold/[.1] px-4 py-3 text-[13px] text-cream font-body cursor-pointer" />
-        </div>
-        <div>
-          <label class="block text-[9px] tracking-[.2em] uppercase text-cream/30 mb-1.5">Heure *</label>
-          <select class="w-full bg-s2 border border-gold/[.1] px-4 py-3 text-[13px] text-cream font-body cursor-pointer">
-            <option class="bg-s2">12:00</option>
-            <option class="bg-s2">12:30</option>
-            <option class="bg-s2">19:00</option>
-            <option class="bg-s2">19:30</option>
-            <option class="bg-s2">20:00</option>
-            <option class="bg-s2">20:30</option>
-            <option class="bg-s2">21:00</option>
-            <option class="bg-s2">21:30</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-[9px] tracking-[.2em] uppercase text-cream/30 mb-1.5">Personnes *</label>
-          <select class="w-full bg-s2 border border-gold/[.1] px-4 py-3 text-[13px] text-cream font-body cursor-pointer">
-            <option class="bg-s2">1</option>
-            <option class="bg-s2" selected>2</option>
-            <option class="bg-s2">3</option>
-            <option class="bg-s2">4</option>
-            <option class="bg-s2">5</option>
-            <option class="bg-s2">6</option>
-            <option class="bg-s2">8+</option>
-          </select>
-        </div>
-      </div>
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-[9px] tracking-[.2em] uppercase text-cream/30 mb-1.5">Table</label>
-          <select class="w-full bg-s2 border border-gold/[.1] px-4 py-3 text-[13px] text-cream font-body cursor-pointer">
-            <option class="bg-s2">Auto-assign</option>
-            <option class="bg-s2">Table 1 (2p)</option>
-            <option class="bg-s2">Table 5 (4p)</option>
-            <option class="bg-s2">Table 12 (6p)</option>
-            <option class="bg-s2">Table 22 (8p)</option>
-            <option class="bg-s2">Salle privée</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-[9px] tracking-[.2em] uppercase text-cream/30 mb-1.5">Statut</label>
-          <select class="w-full bg-s2 border border-gold/[.1] px-4 py-3 text-[13px] text-cream font-body cursor-pointer">
-            <option value="confirmed" class="bg-s2">✅ Confirmée</option>
-            <option value="pending" class="bg-s2">⏳ En attente</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <label class="block text-[9px] tracking-[.2em] uppercase text-cream/30 mb-1.5">Demandes spéciales</label>
-        <textarea rows="3" placeholder="Allergie, occasion spéciale, préférence de table…"
-          class="w-full bg-s2 border border-gold/[.1] px-4 py-3 text-[13px] text-cream placeholder-cream/20 font-body resize-none"></textarea>
-      </div>
-      <!-- Occasion badges -->
-      <div>
-        <label class="block text-[9px] tracking-[.2em] uppercase text-cream/30 mb-2">Occasion</label>
-        <div class="flex flex-wrap gap-2">
-          <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" class="w-3.5 h-3.5" /><span class="text-[11px] text-cream/50">🎂 Anniversaire</span></label>
-          <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" class="w-3.5 h-3.5" /><span class="text-[11px] text-cream/50">💍 Romantique</span></label>
-          <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" class="w-3.5 h-3.5" /><span class="text-[11px] text-cream/50">💼 Business</span></label>
-          <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" class="w-3.5 h-3.5" /><span class="text-[11px] text-cream/50">🎉 Fête</span></label>
-        </div>
-      </div>
-      <!-- Notification toggle (pure CSS) -->
-      <label class="flex items-center justify-between bg-s2 border border-gold/[.08] px-4 py-3 cursor-pointer">
-        <div>
-          <div class="text-[12px] text-cream/55">Envoyer confirmation SMS / Email</div>
-          <div class="text-[10px] text-cream/25 mt-0.5">Notifie automatiquement le client</div>
-        </div>
-        <input type="checkbox" checked class="w-4 h-4" />
-      </label>
-      <!-- Buttons -->
-      <div class="flex gap-3 pt-1">
-        <button onclick="document.getElementById('addModal').classList.add('hidden');document.body.style.overflow=''"
-          class="flex-1 py-3.5 border border-gold/20 text-cream/40 text-[11px] tracking-[.13em] uppercase hover:border-gold hover:text-cream transition-all bg-transparent cursor-pointer">Annuler</button>
-        <button class="group flex-[2] py-3.5 bg-gold text-ink text-[11px] tracking-[.13em] uppercase font-semibold hover:bg-gh transition-colors border-0 cursor-pointer flex items-center justify-center gap-2">
-          <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7" />
-          </svg>
-          Enregistrer la réservation
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 <!-- ══════════════════════════════════════════
@@ -597,28 +489,27 @@
   }
 
   // ── Open modals ──
-  function openView(
-    id, name, phone, table, date, hour, people, status, special_requests,
-    confirmUrl, cancelUrl, editUrl
-  ) {
+  function openView(btn) {
+    const reservation = JSON.parse(btn.dataset.reservation);
+
     document.getElementById('viewModal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 
-    // Fill data
-    document.getElementById('vm-id').textContent = id || '---';
-    document.getElementById('vm-name').textContent = name || 'N/A';
-    document.getElementById('vm-table').textContent = table || 'N/A';
-    document.getElementById('vm-hour').textContent = hour || 'N/A';
-    document.getElementById('vm-date').textContent = date || 'N/A';
-    document.getElementById('vm-people').textContent = people ? people + ' pers.' : 'N/A';
-    document.getElementById('vm-phone').textContent = phone || 'N/A';
-    document.getElementById('vm-note').textContent = special_requests || 'Aucune demande';
+    document.getElementById('vm-id').textContent = reservation.id || '---';
+    document.getElementById('vm-name').textContent = reservation.customer?.name || 'N/A';
+    document.getElementById('vm-table').textContent = reservation.tableNumber || 'N/A';
+    document.getElementById('vm-hour').textContent = reservation.Hour || 'N/A';
+    document.getElementById('vm-date').textContent = reservation.reservationDate || 'N/A';
+    document.getElementById('vm-people').textContent = reservation.numberOfPeople ? reservation.numberOfPeople + ' pers.' : 'N/A';
+    document.getElementById('vm-phone').textContent = reservation.customer?.phone || 'N/A';
+    document.getElementById('vm-note').textContent = reservation.special_requests || 'Aucune demande';
 
-    // Status
     const statusEl = document.getElementById('vm-status');
     statusEl.className = 'badge';
 
-   if(status === 'accepted') {
+    const status = reservation.status;
+
+    if (status === 'accepted') {
       statusEl.classList.add('b-confirmed');
       statusEl.innerHTML = '<span class="badge-dot"></span>Confirmée';
     } else if (status === 'pending') {
@@ -633,9 +524,10 @@
     } else {
       statusEl.textContent = 'Statut inconnu';
     }
-    document.getElementById('vm-confirm-btn').href = confirmUrl;
-    document.getElementById('vm-cancel-btn').href = cancelUrl;
-    document.getElementById('vm-edit-btn').href = editUrl;
+
+    document.getElementById('vm-confirm-btn').href = reservation.confirmUrl;
+    document.getElementById('vm-cancel-btn').href = reservation.cancelUrl;
+    document.getElementById('vm-edit-btn').href = reservation.editUrl;
   }
 
 

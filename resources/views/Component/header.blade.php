@@ -57,46 +57,48 @@
         <!-- Nav -->
         <nav class="flex-1 overflow-y-auto py-4">
             <div class="nav-label-text px-6 pb-2 text-[9px] tracking-[.3em] uppercase text-cream/20 whitespace-nowrap transition-opacity">Principal</div>
-
-            <a href="{{route('Dashboard')}}" class="nav-item active group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-gold bg-gold/[.08] hover:bg-gold/[.08] transition-all" onclick="setPage('dashboard',this)">
+            <a href="{{route('Dashboard')}}" class="nav-item {{ request()->routeIs('Dashboard') ? 'active border-gold bg-gold/[.08] text-gold' : 'border-transparent hover:bg-gold/[.06]' }} group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-gold bg-gold/[.08] hover:bg-gold/[.08] transition-all" onclick="setPage('dashboard',this)">
                 <span class="w-5 text-center text-gold text-base flex-shrink-0">⊞</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-gold whitespace-nowrap">Tableau de bord</span>
             </a>
-            <a href="{{route('admin.reservations')}}" class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="setPage('reservations',this)">
+            @if(Auth::user()->role->name === 'admin' || Auth::user()->role->name === 'waiter')
+            <a href="{{route('admin.reservations')}}" class="nav-item {{ request()->routeIs('admin.reservations') ? 'active border-gold bg-gold/[.08] text-gold' : 'border-transparent hover:bg-gold/[.06]' }} group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="setPage('reservations',this)">
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">🗓</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap flex-1">Réservations</span>
                 <span class="text-black  nav-badge hide-collapsed bg-gold text-dark text-[9px] font-semibold px-1.5 py-0.5">8</span>
             </a>
-            <a href="{{route('admin.orders')}}" class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="setPage('orders',this)">
+            @endif
+            @if(Auth::user()->role->name === 'admin' || Auth::user()->role->name === 'cooker')
+            <a href="{{route('admin.orders')}}" class="nav-item {{ request()->routeIs('admin.orders') ? 'active border-gold bg-gold/[.08] text-gold' : 'border-transparent hover:bg-gold/[.06]' }} group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="setPage('orders',this)">
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">🍽</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap flex-1">Commandes</span>
                 <span class="text-black  nav-badge hide-collapsed bg-gold text-dark text-[9px] font-semibold px-1.5 py-0.5">3</span>
             </a>
+            @endif
+            @if(Auth::user()->role->name === 'admin')
             <a href="{{route('AddItem')}}">
-                <div class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="window.location.href='add-item.html'">
+                <div class="nav-item {{ request()->routeIs('AddItem') ? 'active border-gold bg-gold/[.08] text-gold' : 'border-transparent hover:bg-gold/[.06]' }} group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all" onclick="window.location.href='add-item.html'">
                     <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">＋</span>
                     <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Produit</span>
                 </div>
             </a>
 
 
+
             <div class="nav-label-text mt-4 px-6 pb-2 text-[9px] tracking-[.3em] uppercase text-cream/20 whitespace-nowrap transition-opacity">Gestion</div>
-            <a href="{{route('show_items')}}" class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
+            <a href="{{route('show_items')}}" class="nav-item {{ request()->routeIs('show_items') ? 'active border-gold bg-gold/[.08] text-gold' : 'border-transparent hover:bg-gold/[.06]' }} group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">📋</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Menu</span>
             </a>
-            <a href="{{route('clients')}}" class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
+            <a href="{{route('clients')}}" class="nav-item {{ request()->routeIs('clients') ? 'active border-gold bg-gold/[.08] text-gold' : 'border-transparent hover:bg-gold/[.06]' }} group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">👤</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Clients</span>
             </a>
-            <a href="{{route('Restaurant_Info')}}" class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
+            <a href="{{route('Restaurant_Info')}}" class="nav-item {{ request()->routeIs('Restaurant_Info') ? 'active border-gold bg-gold/[.08] text-gold' : 'border-transparent hover:bg-gold/[.06]' }} group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
                 <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">ℹ</span>
                 <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Informations de Restaurant</span>
             </a>
-            <a class="nav-item group flex items-center gap-3 px-6 py-[11px] cursor-pointer border-l-2 border-transparent hover:bg-gold/[.06] transition-all">
-                <span class="w-5 text-center text-cream/45 text-base flex-shrink-0">⚙</span>
-                <span class="hide-collapsed text-[12px] tracking-wide text-cream/45 whitespace-nowrap">Paramètres</span>
-            </a>
+            @endif
         </nav>
 
         <!-- User -->
@@ -142,4 +144,3 @@
             </button>
             <div id="topDate" class="text-[11px] text-cream/35 pl-3 border-l border-gold/[.1]"></div>
         </header>
-        

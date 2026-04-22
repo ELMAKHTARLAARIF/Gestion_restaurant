@@ -95,7 +95,9 @@ class AdminController
     public function ShowReservationsPage()
     {
 
-        $reservations = Reservation::with('customer')->latest()->get();
+        $reservations = Reservation::with('customer')
+            ->latest()
+            ->paginate(5);
         $TotalDays = Reservation::selectRaw('DATE(created_at) as date, COUNT(*) as count')
             ->groupBy('date')
             ->orderByDesc('date')

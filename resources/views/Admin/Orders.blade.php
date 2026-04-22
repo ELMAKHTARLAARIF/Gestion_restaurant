@@ -170,9 +170,9 @@
                 @endforeach
               </div>
               @php
-                $minutes = $order->created_at->diffInMinutes(now());
-                $hours = floor($minutes / 60);
-                $mins = $minutes % 60;
+              $minutes = $order->created_at->diffInMinutes(now());
+              $hours = floor($minutes / 60);
+              $mins = $minutes % 60;
               @endphp
               <div class="flex items-center justify-between">
                 <span class="text-[9px] text-cream/28">{{ $hours > 0 ? $hours.'h ' : '' }}{{ $mins }}min en cuisine</span>
@@ -368,19 +368,29 @@
               </td>
               <td class="px-4 py-3.5">
                 <div class="row-acts flex items-center justify-end gap-1.5">
-                  <button onclick="openDetail('{{ $order->id }}')" class="w-7 h-7 border border-gold/[.12] flex items-center justify-center text-cream/28 hover:border-gold hover:text-gold transition-all bg-transparent cursor-pointer">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                  </button>
+
+                  <form method="POST" action="{{ route('orders.destroy', $order->id) }}">
+                    @csrf
+                    @method('DELETE')
+
+                    <button type="submit"
+                      onclick="return confirm('Voulez-vous vraiment supprimer cette commande ?')"
+                      class="w-7 h-7 border border-gold/[.12] flex items-center justify-center text-cream/28 hover:border-red-500 hover:text-red-500 transition-all bg-transparent cursor-pointer">
+
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                          d="M6 7h12M9 7V5h6v2m-7 4v6m4-6v6m5-10v12a2 2 0 01-2 2H7a2 2 0 01-2-2V7h14z" />
+                      </svg>
+
+                    </button>
+                  </form>
+
                 </div>
               </td>
             </tr>
             @endforeach
           </tbody>
         </table>
-        <!-- Table pagination -->
         <div class="flex items-center justify-between py-4 border-t border-gold/[.06] mt-2">
           <span class="text-[11px] text-cream/25">{{ $AllOrders->count() }} commandes</span>
           <div class="flex gap-1.5">
@@ -395,174 +405,32 @@
   </div><!-- /main -->
 
 
-  <!-- ══════════════════ ORDER DETAIL MODAL ══════════════════ -->
-  <div id="detailModal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-end sm:justify-center px-0 sm:px-4">
-    <div class="mbd absolute inset-0" onclick="closeModal('detailModal')"></div>
-    <div class="relative bg-s1 border border-gold/[.18] w-full sm:max-w-md h-[90vh] sm:h-auto sm:max-h-[90vh] shadow-2xl animate-siu flex flex-col">
-      <!-- Header -->
-      <div class="flex items-center justify-between px-6 py-5 border-b border-gold/[.1] shrink-0">
-        <div>
-          <span class="block text-[8px] tracking-[.38em] uppercase text-gold mb-0.5">Commande</span>
-          <h3 class="font-display text-xl font-light">Détail <em class="italic text-gold">#<span id="dRef">0248</span></em></h3>
-        </div>
-        <button onclick="closeModal('detailModal')" class="w-8 h-8 border border-gold/18 flex items-center justify-center text-cream/28 hover:text-gold hover:border-gold transition-all bg-transparent cursor-pointer">✕</button>
-      </div>
-
-      <div class="overflow-y-auto flex-1 p-6 flex flex-col gap-5">
-        <!-- Client + Table info -->
-        <div class="grid grid-cols-2 gap-px bg-gold/[.06]">
-          <div class="bg-s2 px-4 py-3">
-            <div class="text-[8px] tracking-[.2em] uppercase text-gold mb-1">Client</div>
-            <div class="text-[13px] text-cream">M. Alami</div>
-            <div class="text-[10px] text-cream/30">+212 661 234 567</div>
-          </div>
-          <div class="bg-s2 px-4 py-3">
-            <div class="text-[8px] tracking-[.2em] uppercase text-gold mb-1">Table</div>
-            <div class="font-display text-xl text-cream">12</div>
-            <div class="text-[10px] text-cream/28">4 couverts</div>
-          </div>
-          <div class="bg-s2 px-4 py-3">
-            <div class="text-[8px] tracking-[.2em] uppercase text-gold mb-1">Passée à</div>
-            <div class="font-display text-xl text-gold">19:42</div>
-          </div>
-          <div class="bg-s2 px-4 py-3">
-            <div class="text-[8px] tracking-[.2em] uppercase text-gold mb-1">Note</div>
-            <div class="text-[11px] text-cream/50 italic">Allergie crustacés</div>
-          </div>
-        </div>
-
-        <!-- Status change -->
-        <div>
-          <label class="block text-[8px] tracking-[.2em] uppercase text-cream/30 mb-2">Changer le statut</label>
-          <div class="grid grid-cols-4 gap-1.5" id="statusBtns">
-            <button class="py-2 border border-amber/30 bg-amber/10 text-amber text-[8px] tracking-[.1em] uppercase cursor-pointer hover:bg-amber/15 transition-all">Pending</button>
-            <button class="py-2 border border-gold/[.12] text-cream/25 text-[8px] tracking-[.1em] uppercase cursor-pointer hover:border-sage/30 hover:text-sage transition-all">Confirmed</button>
-            <button class="py-2 border border-gold/[.12] text-cream/25 text-[8px] tracking-[.1em] uppercase cursor-pointer hover:border-gold/40 hover:text-gold transition-all">Preparing</button>
-            <button class="py-2 border border-gold/[.12] text-cream/25 text-[8px] tracking-[.1em] uppercase cursor-pointer hover:border-sky/30 hover:text-sky transition-all">Ready</button>
-            <button class="py-2 border border-gold/[.12] text-cream/25 text-[8px] tracking-[.1em] uppercase cursor-pointer hover:border-mint/30 hover:text-mint transition-all">Delivered</button>
-            <button class="py-2 border border-gold/[.12] text-cream/25 text-[8px] tracking-[.1em] uppercase cursor-pointer hover:border-lav/30 hover:text-lav transition-all">Completed</button>
-            <button onclick="openModal('cancelModal')" class="py-2 border border-rose/20 text-rose/50 text-[8px] tracking-[.1em] uppercase cursor-pointer hover:border-rose hover:text-rose hover:bg-rose/07 transition-all col-span-2">✕ Cancelled</button>
-          </div>
-        </div>
-
-        <!-- Items -->
-        <div>
-          <div class="text-[8px] tracking-[.25em] uppercase text-cream/28 mb-2">Articles</div>
-          <div class="divide-y divide-gold/[.04]">
-            <div class="flex items-center gap-3 py-2.5">
-              <div class="w-8 h-8 bg-s2 border border-gold/[.07] flex items-center justify-center text-base shrink-0">🥩</div>
-              <div class="flex-1">
-                <div class="text-[12px] text-cream">Côte de Bœuf Grillée</div>
-                <div class="text-[9px] text-cream/30">Bien cuit · Sans noix</div>
-              </div>
-              <div class="text-right shrink-0">
-                <div class="text-[9px] text-cream/30">×1</div>
-                <div class="font-display text-sm text-gold">380 MAD</div>
-              </div>
-            </div>
-            <div class="flex items-center gap-3 py-2.5">
-              <div class="w-8 h-8 bg-s2 border border-gold/[.07] flex items-center justify-center text-base shrink-0">🥗</div>
-              <div class="flex-1">
-                <div class="text-[12px] text-cream">Carpaccio de Saint-Jacques</div>
-                <div class="text-[9px] text-cream/30">Standard</div>
-              </div>
-              <div class="text-right shrink-0">
-                <div class="text-[9px] text-cream/30">×2</div>
-                <div class="font-display text-sm text-gold">370 MAD</div>
-              </div>
-            </div>
-            <div class="flex items-center gap-3 py-2.5">
-              <div class="w-8 h-8 bg-s2 border border-gold/[.07] flex items-center justify-center text-base shrink-0">🍵</div>
-              <div class="flex-1">
-                <div class="text-[12px] text-cream">Thé à la Menthe</div>
-              </div>
-              <div class="text-right shrink-0">
-                <div class="text-[9px] text-cream/30">×2</div>
-                <div class="font-display text-sm text-gold">90 MAD</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Total -->
-        <div class="flex items-center justify-between bg-s2 border border-gold/[.08] px-4 py-3">
-          <span class="text-[9px] tracking-[.2em] uppercase text-gold">Total</span>
-          <span class="font-display text-xl text-gold">750 <span class="text-sm text-cream/25">MAD</span></span>
-        </div>
-
-        <!-- Step timeline -->
-        <div>
-          <div class="text-[8px] tracking-[.25em] uppercase text-cream/28 mb-3">Progression</div>
-          <div class="relative">
-            <div class="absolute left-[6px] top-2 bottom-2 w-px bg-gold/[.1]"></div>
-            <div class="space-y-3">
-              <div class="step done flex items-center gap-3">
-                <div class="sdot w-3 h-3 border-2 shrink-0 z-10 bg-s1"></div>
-                <div class="flex-1 flex justify-between"><span class="text-[11px] text-sage">Reçue & Pending</span><span class="text-[9px] text-cream/22">19:42</span></div>
-              </div>
-              <div class="step active flex items-center gap-3">
-                <div class="sdot w-3 h-3 border-2 shrink-0 z-10 bg-s1"></div>
-                <div class="flex-1 flex justify-between"><span class="text-[11px] text-gold">Pending (actuel)</span><span class="text-[9px] text-cream/22">19:42</span></div>
-              </div>
-              <div class="step next flex items-center gap-3">
-                <div class="sdot w-3 h-3 border-2 shrink-0 z-10 bg-s1"></div>
-                <div><span class="text-[11px] text-cream/22">Confirmed</span></div>
-              </div>
-              <div class="step next flex items-center gap-3">
-                <div class="sdot w-3 h-3 border-2 shrink-0 z-10 bg-s1"></div>
-                <div><span class="text-[11px] text-cream/22">Preparing</span></div>
-              </div>
-              <div class="step next flex items-center gap-3">
-                <div class="sdot w-3 h-3 border-2 shrink-0 z-10 bg-s1"></div>
-                <div><span class="text-[11px] text-cream/22">Ready</span></div>
-              </div>
-              <div class="step next flex items-center gap-3">
-                <div class="sdot w-3 h-3 border-2 shrink-0 z-10 bg-s1"></div>
-                <div><span class="text-[11px] text-cream/22">Delivered</span></div>
-              </div>
-              <div class="step next flex items-center gap-3">
-                <div class="sdot w-3 h-3 border-2 shrink-0 z-10 bg-s1"></div>
-                <div><span class="text-[11px] text-cream/22">Completed</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Footer actions -->
-      <div class="px-6 py-4 border-t border-gold/[.1] bg-s2 shrink-0 grid grid-cols-2 gap-2">
-        <button onclick="closeModal('detailModal')" class="py-3 border border-gold/18 text-cream/35 text-[10px] tracking-[.12em] uppercase hover:border-gold hover:text-cream transition-all bg-transparent cursor-pointer">Fermer</button>
-        <button onclick="closeModal('detailModal')" class="py-3 bg-gold text-ink text-[10px] tracking-[.12em] uppercase font-semibold hover:bg-gh transition-colors border-0 cursor-pointer">Imprimer ticket</button>
-      </div>
-    </div>
-  </div>
-
-
   <script>
     function updateStatus(select, orderId) {
-        let status = select.value;
+      let status = select.value;
 
-        fetch(`/Status/Update/${orderId}`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            },
-            body: new URLSearchParams({
-                status: status
-            })
+      fetch(`/Status/Update/${orderId}`, {
+          method: 'POST',
+          headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+          },
+          body: new URLSearchParams({
+            status: status
+          })
         })
         .then(res => res.json())
         .then(data => {
-            console.log(data);
-            alert('Status updated');
+          console.log(data);
+          alert('Status updated');
         })
         .catch(error => {
-            console.error(error);
-            alert('Error updating status');
+          console.error(error);
+          alert('Error updating status');
         });
     }
   </script>
 
 </body>
+
 </html>

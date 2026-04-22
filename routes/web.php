@@ -63,6 +63,9 @@ Route::middleware(['auth', 'admin',])->group(function () {
 Route::post('/admin/users/{id}/inactive', [AdminController::class, 'inactive']);
 Route::post('/admin/users/{id}/block', [AdminController::class, 'block']);
 Route::delete('/admin/users/{id}', [AdminController::class, 'destroy']);
+Route::delete('Order/destroy/{id}', [OrderController::class, 'delete'])->name('orders.destroy');
+
+
 
 });
 

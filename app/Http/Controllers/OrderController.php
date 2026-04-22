@@ -13,6 +13,7 @@ use Illuminate\View\View;
 use Tymon\JWTAuth\Http\Parser\AuthHeaders;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderCreatedMail;
+use App\Mail\OrderDeletedMail;
 
 class OrderController extends Controller
 {
@@ -153,5 +154,21 @@ class OrderController extends Controller
         $pastOrders  = $orders->whereIn('status', ['completed', 'delivered', 'cancelled']);
 
         return view('CLient.Panier', compact('activeOrder', 'pastOrders'));
+    }
+    public function delete($id)
+    {
+        $order = Order::with('customer')->findOrFail($id);
+
+        // send email to client
+        if ($order->customer && $order->customer->email) {
+            Mail::to($order->customer->email)->send(
+                new OrderDeletedMail($order)
+            );
+        }
+
+        // delete order
+        $order->delete();
+
+        return back()->with('success', 'Order deleted and email sent');
     }
 }

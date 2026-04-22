@@ -25,7 +25,7 @@ class AuthController extends Controller
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
             'role_id' => $role->id,
-            'status'=>'active'
+            'status' => 'active'
         ]);
 
         if ($user) {
@@ -42,10 +42,10 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required'
         ]);
-
+        
         if (Auth::attempt($credentials, $request->remember)) {
             $request->session()->regenerate();
-            if (Auth::user()->role->name === 'admin') {
+            if (Auth::user()->role->name === 'admin' || Auth::user()->role->name === 'cooker' || Auth::user()->role->name === 'waiter') {
                 return redirect()->route('Dashboard');
             }
             return redirect()->route('home');

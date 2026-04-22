@@ -36,10 +36,6 @@
 
   <div class="max-w-6xl mx-auto px-6 lg:px-14 py-12 flex flex-col gap-14">
 
-    <!-- ═══════════════════════════════
-         ACTIVE ORDER
-    ═══════════════════════════════ -->
-{{-- ── ACTIVE ORDER ── --}}
 <section>
   <div class="flex items-center gap-4 mb-8 animate-fu3">
     <div class="h-px flex-1 bg-gold/[.1]"></div>

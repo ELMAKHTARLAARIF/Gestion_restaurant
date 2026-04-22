@@ -11,10 +11,10 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next)
     {
 
-        if (Auth::check() && Auth::user()->role->name === 'admin') {
+        if (Auth::check() && Auth::user()->role->name === 'admin' || Auth::user()->role->name === 'cooker' || Auth::user()->role->name === 'waiter') {
             return $next($request);
         }
 
-        abort(403); 
+        abort(403);
     }
 }

@@ -26,6 +26,6 @@ class OrderCreatedMail extends Mailable
     public function build()
     {
         return $this->subject('Order Confirmation - #' . $this->order->id)
-                    ->view('CLient.order_created');
+                    ->view('Emails.order_created');
     }
 }
