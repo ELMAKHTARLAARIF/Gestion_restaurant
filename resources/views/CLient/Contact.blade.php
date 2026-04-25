@@ -24,7 +24,7 @@
             <div class="w-8 h-8 border border-gold/20 flex items-center justify-center text-gold flex-shrink-0 text-sm">📞</div>
             <div>
               <div class="text-[10px] tracking-[.2em] uppercase text-gold mb-1">Téléphone</div>
-              <div class="text-[13px] text-cream/50">+212 522 000 000</div>
+              <div class="text-[13px] text-cream/50">+212 670983477</div>
             </div>
           </div>
           <div class="flex items-start gap-4">
@@ -36,7 +36,6 @@
           </div>
         </div>
       </div>
-      @if(Auth::user())
       <div>
         <span class="block text-[10px] tracking-[.4em] uppercase text-gold mb-4">Message</span>
         <h2 class="font-display font-light mb-8" style="font-size:clamp(2rem,4vw,2.8rem)">Écrivez-<em class="italic text-gold">nous</em></h2>
@@ -60,7 +59,6 @@
           </form>
         </div>
       </div>
-      @endif
     </div>
     @include('Component.HandleMessages')
 

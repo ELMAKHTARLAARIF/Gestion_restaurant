@@ -17,20 +17,6 @@ use App\Http\Controllers\Auth\SocialController;
 use App\Http\Controllers\Auth\AuthController;
 use Stripe\ApiOperations\Update;
 
-Route::get('/auth/google', [SocialController::class, 'redirect']);
-Route::get('/auth/google/callback', [SocialController::class, 'callback']);
-Route::get('/',[GeustController::class,'guest'])->name('guest');
-Route::get('/user/login', function () {
-    return view('Auth.login');
-})->name('login');
-Route::get('signup', function () {
-    return View('Auth.signup');
-})->name('signup');
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-
-Route::post('/register', [AuthController::class, 'store'])->name('store');
-Route::post('/login', [AuthController::class, 'login'])->name('login.store');
-
 
 Route::middleware(['auth', 'admin',])->group(function () {
 
@@ -58,23 +44,19 @@ Route::middleware(['auth', 'admin',])->group(function () {
     });
     Route::post('/Status/Update/{id}', [OrderController::class, 'Update_Status']);
 
-    Route::get('/clients',[AdminController::class, 'index'])->name('clients');
+    Route::get('/clients', [AdminController::class, 'index'])->name('clients');
     Route::post('/admin/users/{id}/activate', [AdminController::class, 'activate']);
-Route::post('/admin/users/{id}/inactive', [AdminController::class, 'inactive']);
-Route::post('/admin/users/{id}/block', [AdminController::class, 'block']);
-Route::delete('/admin/users/{id}', [AdminController::class, 'destroy']);
-Route::delete('Order/destroy/{id}', [OrderController::class, 'delete'])->name('orders.destroy');
-
-
-
+    Route::post('/admin/users/{id}/inactive', [AdminController::class, 'inactive']);
+    Route::post('/admin/users/{id}/block', [AdminController::class, 'block']);
+    Route::delete('/admin/users/{id}', [AdminController::class, 'destroy']);
+    Route::delete('Order/destroy/{id}', [OrderController::class, 'delete'])->name('orders.destroy');
 });
 
 Route::middleware(['auth', 'role:customer,waiter,cooker'])->group(function () {
     Route::get('/reservation', [ReservationController::class, 'ShowReservationForm'])->name('reservation');
-    Route::post('/reservation/panier/{id}',[ReservationController::class,'delete'])->name('reservation.panier.cancel');
+    Route::post('/reservation/panier/{id}', [ReservationController::class, 'delete'])->name('reservation.panier.cancel');
     Route::post('/reservation/create', [ReservationController::class, 'MakeReservation'])->name('reservation_create');
 
-    Route::post('/contact', [ContactMessageController::class, 'Send'])->name('contact');
     Route::get('/home', [MenuItemController::class, 'show'])->name('home');
     Route::post('/order/payment-intent', [OrderController::class, 'createPaymentIntent']);
     Route::post('/order/store', [OrderController::class, 'store']);
@@ -88,5 +70,18 @@ Route::middleware(['auth', 'role:customer,waiter,cooker'])->group(function () {
         '/client/mes-reservations',
         [ReservationController::class, 'index']
     )->name('client.reservations');
-
 });
+
+Route::post('/register', [AuthController::class, 'store'])->name('store');
+Route::post('/login', [AuthController::class, 'login'])->name('login.store');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/contact', [ContactMessageController::class, 'Send'])->name('contact');
+Route::get('/auth/google', [SocialController::class, 'redirect']);
+Route::get('/auth/google/callback', [SocialController::class, 'callback']);
+Route::get('/', [GeustController::class, 'guest'])->name('guest');
+Route::get('/user/login', function () {
+    return view('Auth.login');
+})->name('login');
+Route::get('signup', function () {
+    return View('Auth.signup');
+})->name('signup');
