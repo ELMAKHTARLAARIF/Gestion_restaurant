@@ -25,11 +25,11 @@ public function authorize(): bool
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'prix' => 'required|numeric|min:0',
-            'category' => 'required|string|max:255',
             'image' => 'nullable|image|max:2048',
             'temp_prepa' => 'required|integer|min:1',
             'status' => 'required|in:disponible,indisponible',
-            'action' => 'required|in:publish,draft'
+            'action' => 'required|in:publish,draft',
+            'category_id' => 'required|exists:MenuCategory,id',
             
         ];
     }

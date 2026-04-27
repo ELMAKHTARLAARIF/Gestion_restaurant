@@ -15,7 +15,9 @@ use Illuminate\Routing\RouteUri;
 use Illuminate\View\View;
 use App\Http\Controllers\Auth\SocialController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Models\MenuCategory;
 use Stripe\ApiOperations\Update;
+use App\Http\Controllers\MenuCategoryController;
 
 
 Route::middleware(['auth', 'admin',])->group(function () {
@@ -24,9 +26,7 @@ Route::middleware(['auth', 'admin',])->group(function () {
 
     Route::get('/Dashboard', [AdminController::class, 'dashboard'])->name('Dashboard');
     Route::get('/dashboard/chart-data', [AdminController::class, 'chartData']);
-    Route::get('Add/Item', function () {
-        return View('Admin.addProduit');
-    })->name('AddItem');
+    Route::get('Add/Item',[MenuCategoryController::class,'AddItem'])->name('AddItem');
 
     Route::get('/Items', [MenuItemController::class, 'show'])->name('show_items');
     Route::get('/Reservations', [AdminController::class, 'ShowReservationsPage'])->name('admin.reservations');

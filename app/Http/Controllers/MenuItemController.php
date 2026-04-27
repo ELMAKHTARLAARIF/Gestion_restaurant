@@ -31,15 +31,8 @@ class MenuItemController extends Controller
     public function create(CreateProduitRequest $request)
     {
         $validatedData = $request->validated();
+
         $validatedData['user_id'] = Auth::id();
-
-        $category = MenuCategory::firstOrCreate([
-            'name' => $validatedData['category']
-        ]);
-
-        $validatedData['category_id'] = $category->id;
-
-        unset($validatedData['category']);
 
         if ($request->hasFile('image')) {
             $validatedData['image'] = $request->file('image')->store('menu', 'public');
@@ -51,7 +44,7 @@ class MenuItemController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
 
-        return redirect()->route('Dashboard')
+        return redirect()->route('show_items')
             ->with('success', 'Item ajouté avec succès.');
     }
 
@@ -60,18 +53,18 @@ class MenuItemController extends Controller
         $item = MenuItem::find($id);
         if ($item) {
             $item->delete();
-            return redirect()->route('dashboard')->with('success, Item Mark As Deleted');
+            return redirect()->route('dashboard')->with('success', 'Item Mark As Deleted');
         } else
-            return redirect()->route('dashboard')->with('error, elete Failed Try Again');
+            return redirect()->route('dashboard')->with('error', 'Delete Failed Try Again');
     }
 
     public function handleStock($id)
     {
         $item = MenuItem::find($id);
         if ($item->status == 'Temporairement indisponible') {
-            $item->update('status, Disponible');
+            $item->update(['status' => 'Disponible']);
         } else
-            $item->update('status, Temporairement indisponible');
+            $item->update(['status' => 'Temporairement indisponible']);
     }
 
 
@@ -79,15 +72,15 @@ class MenuItemController extends Controller
     public function edit($id)
     {
         $item       = MenuItem::with('category', 'user')->findOrFail($id);
-        $categories = MenuCategory::orderBy('name')->get(); // FIX 3 : all categories
+        $categories = MenuCategory::orderBy('name')->get(); 
 
         return view('Admin.Edit_Produit', compact('item', 'categories'));
     }
- 
+
     public function update(Request $request, int $id)
     {
         $item = MenuItem::findOrFail($id);
- 
+
         $validated = $request->validate([
             'name'        => 'required|string|max:255',
             'category_id' => 'required|exists:MenuCategory,id',
@@ -97,15 +90,14 @@ class MenuItemController extends Controller
             'status'      => 'nullable|string|in:disponible,Temporairement indisponible',
             'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
- 
-        // Replace image if a new file was uploaded
+
         if ($request->hasFile('image')) {
             if ($item->image && Storage::disk('public')->exists($item->image)) {
                 Storage::disk('public')->delete($item->image);
             }
             $item->image = $request->file('image')->store('menu_items', 'public');
         }
- 
+
         $item->name        = $validated['name'];
         $item->category_id = $validated['category_id'];
         $item->description = $validated['description'];
@@ -113,7 +105,7 @@ class MenuItemController extends Controller
         $item->temp_prepa  = $validated['temp_prepa'] ?? null;
         $item->status      = $validated['status'] ?? 'disponible';
         $item->save();
- 
+
         return redirect()
             ->route('show_items')
             ->with('success', 'Modifications enregistrées avec succès.');
