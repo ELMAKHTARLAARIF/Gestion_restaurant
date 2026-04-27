@@ -349,11 +349,11 @@
           </label>
         </div>
 
-        {{-- Stripe card element (only one, only here) --}}
+        {{-- ═══ FIX 1: added px-4 py-3 min-h-[44px] so Stripe iframe is visible ═══ --}}
         <div id="cardForm" class="flex flex-col gap-3">
           <div>
             <label class="block text-[9px] tracking-[.2em] uppercase text-ivory/25 mb-1.5">Numéro de carte *</label>
-            <div id="card-element" class="bg-s2 border border-gold/[.1] transition-all"></div>
+            <div id="card-element" class="bg-s2 border border-gold/[.1] transition-all px-4 py-3 min-h-[44px]"></div>
             <div id="card-errors" role="alert" class="text-[10px] text-rose mt-1 min-h-[16px]"></div>
           </div>
         </div>
@@ -394,7 +394,6 @@
         </p>
         <div class="inline-block bg-s2 border border-gold/[.15] px-6 py-3 mb-8">
           <div class="text-[9px] tracking-[.25em] uppercase text-gold mb-0.5">Référence commande</div>
-          {{-- id="orderRefNum" targeted directly by JS --}}
           <div id="orderRefNum" class="font-serif text-lg text-ivory">#LM-2025-0000</div>
         </div>
         <div class="flex flex-col gap-3">
@@ -427,7 +426,133 @@
     <span id="fabBadge" class="absolute -top-1 -right-1 w-5 h-5 bg-rose text-ivory text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
   </button>
 
+  <script src="https://js.stripe.com/v3/"></script>
   <script src="{{ asset('js/Menu.js') }}"></script>
+
+  <script>
+    const stripe = Stripe('{{ config("stripe.key") }}');
+    const elements = stripe.elements();
+    const cardElement = elements.create('card', {
+      style: {
+        base: {
+          color: '#F0EAD6',
+          fontFamily: 'monospace',
+          fontSize: '14px',
+          '::placeholder': { color: 'rgba(240,234,214,0.3)' },
+          iconColor: '#C8A96E',
+        },
+        invalid: { color: '#e57373' }
+      }
+    });
+
+    let cardMounted = false;
+
+    function mountCard() {
+      if (!cardMounted) {
+        cardElement.mount('#card-element');
+        cardMounted = true;
+      }
+    }
+
+    // Hook into selectPay from Menu.js
+    const _origSelectPay = window.selectPay;
+    window.selectPay = function(method) {
+      if (typeof _origSelectPay === 'function') _origSelectPay(method);
+      if (method === 'card') mountCard();
+    };
+
+    // Hook into goStep from Menu.js — mount card when step 3 opens
+    const _origGoStep = window.goStep;
+    window.goStep = function(n) {
+      if (typeof _origGoStep === 'function') _origGoStep(n);
+      if (n === 3) setTimeout(mountCard, 50);
+    };
+
+    // confirmPay — called by "Payer maintenant" button
+    window.confirmPay = async function() {
+      const method = document.querySelector('input[name="pay"]:checked')?.value || 'card';
+      const btn = document.getElementById('payBtn');
+
+      if (method === 'card') {
+        btn.disabled = true;
+        btn.textContent = 'Traitement…';
+
+        try {
+          // 1 — get total from the modal
+          const rawTotal = document.getElementById('pTot')?.textContent?.replace(/[^0-9.]/g, '') || '0';
+          const total = parseFloat(rawTotal) || 0;
+
+          // 2 — create PaymentIntent on server
+          const intentRes = await fetch('/order/payment-intent', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ amount: total })
+          });
+          const { client_secret } = await intentRes.json();
+
+          // 3 — confirm card with Stripe
+          const { paymentIntent, error } = await stripe.confirmCardPayment(client_secret, {
+            payment_method: { card: cardElement }
+          });
+
+          if (error) {
+            document.getElementById('card-errors').textContent = error.message;
+            btn.disabled = false;
+            btn.textContent = 'Payer maintenant';
+            return;
+          }
+
+          // 4 — submit order to Laravel
+          await submitOrder(method, paymentIntent.id);
+
+        } catch (e) {
+          console.error(e);
+          document.getElementById('card-errors').textContent = 'Une erreur est survenue. Veuillez réessayer.';
+          btn.disabled = false;
+          btn.textContent = 'Payer maintenant';
+        }
+
+      } else {
+        // cash or mobile — no Stripe needed
+        await submitOrder(method, null);
+      }
+    };
+
+    async function submitOrder(method, intentId) {
+      const items = Object.entries(window._cart || {}).map(([name, v]) => ({
+        id: v.id, name, price: v.price, qty: v.qty
+      }));
+
+      const res = await fetch('/order/store', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+          items,
+          payment_method: method,
+          stripe_payment_intent: intentId
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        document.getElementById('orderRefNum').textContent = data.order_ref;
+        goStep(4);
+        window.clearCart?.();
+      } else {
+        document.getElementById('card-errors').textContent = data.message || 'Erreur lors de la commande.';
+        const btn = document.getElementById('payBtn');
+        btn.disabled = false;
+        btn.textContent = 'Payer maintenant';
+      }
+    }
+  </script>
 
 </body>
 </html>

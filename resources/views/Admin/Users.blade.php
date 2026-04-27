@@ -153,14 +153,43 @@
                 </span>
                 @endif
               </td>
-
               <td class="px-6 py-3.5 text-right">
-                <button class="btn-activate w-7 h-7 border border-cgreen/[.2]" data-id="{{ $user->id }}">✅</button>
-                <button class="btn-inactive w-7 h-7 border border-gold/[.2]" data-id="{{ $user->id }}">⏸</button>
-                <button class="btn-block w-7 h-7 border border-cred/[.2]" data-id="{{ $user->id }}">🚫</button>
-                <button class="btn-delete w-7 h-7 border border-cred/[.15]" data-id="{{ $user->id }}">🗑</button>
-              </td>
+                <!-- Activate: check-circle -->
+                <button class="btn-activate w-7 h-7 border border-cgreen/[.2]" data-id="{{ $user->id }}">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-cgreen">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                </button>
 
+                <!-- Inactive: pause-circle -->
+                <button class="btn-inactive w-7 h-7 border border-gold/[.2]" data-id="{{ $user->id }}">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-gold">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="10" y1="15" x2="10" y2="9" />
+                    <line x1="14" y1="15" x2="14" y2="9" />
+                  </svg>
+                </button>
+
+                <!-- Block: ban -->
+                <button class="btn-block w-7 h-7 border border-cred/[.2]" data-id="{{ $user->id }}">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-cred">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                  </svg>
+                </button>
+
+                <!-- Delete: trash-2 -->
+                <button class="btn-delete w-7 h-7 border border-cred/[.15]" data-id="{{ $user->id }}">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-cred">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6l-1 14H6L5 6" />
+                    <path d="M10 11v6" />
+                    <path d="M14 11v6" />
+                    <path d="M9 6V4h6v2" />
+                  </svg>
+                </button>
+              </td>
             </tr>
 
             @empty

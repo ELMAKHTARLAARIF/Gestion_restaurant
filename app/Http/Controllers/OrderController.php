@@ -31,40 +31,6 @@ class OrderController extends Controller
         ];
         return view('Admin.Orders', compact('AllOrders', 'counts'));
     }
-    public function createPaymentIntent(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'items'  => 'required|array|min:1',
-            'email'  => 'required|email',
-            'prenom' => 'required|string',
-            'nom'    => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
-        }
-
-        $totalAmount = collect($request->items)->sum(fn($i) => ($i['price'] ?? 0) * ($i['qty'] ?? 0));
-        $amountCents = (int) round($totalAmount * 100);
-
-        if ($amountCents < 100) {
-            return response()->json(['success' => false, 'message' => 'Montant minimum non atteint.'], 422);
-        }
-
-        try {
-            Stripe::setApiKey(config('stripe.secret'));
-
-            $intent = PaymentIntent::create([
-                'amount' => $amountCents,
-                'currency' => 'mad',
-                'automatic_payment_methods' => ['enabled' => true],
-            ]);
-
-            return response()->json(['success' => true, 'clientSecret' => $intent->client_secret]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
-        }
-    }
 
     public function store(CreateOrderRequest $request)
     {
@@ -118,6 +84,40 @@ class OrderController extends Controller
             'order_id'  => $order->id,
             'order_ref' => $orderRef,
         ]);
+    }
+    public function createPaymentIntent(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'items'  => 'required|array|min:1',
+            'email'  => 'required|email',
+            'prenom' => 'required|string',
+            'nom'    => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        $totalAmount = collect($request->items)->sum(fn($i) => ($i['price'] ?? 0) * ($i['qty'] ?? 0));
+        $amountCents = (int) round($totalAmount * 100);
+
+        if ($amountCents < 100) {
+            return response()->json(['success' => false, 'message' => 'Montant minimum non atteint.'], 422);
+        }
+
+        try {
+            Stripe::setApiKey(config('stripe.secret'));
+
+            $intent = PaymentIntent::create([
+                'amount' => $amountCents,
+                'currency' => 'mad',
+                'automatic_payment_methods' => ['enabled' => true],
+            ]);
+
+            return response()->json(['success' => true, 'clientSecret' => $intent->client_secret]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
     public function Update_Status($id, Request $request)
     {

@@ -57,9 +57,6 @@ window.closeDrawer = function () {
   document.getElementById('drawerBg')?.classList.add('hidden');
 };
 
-// ── Cart (make sure cart exists!) ──
-
-// ── Toast ──
 window.toast = function (icon, title, sub) {
   const t = document.getElementById('toast');
 
@@ -76,7 +73,7 @@ window.toast = function (icon, title, sub) {
   }, 3200);
 };
 
-// Toast helper
+
 function showToast(message) {
     const toast = document.getElementById('toast');
     const tTitle = document.getElementById('tTitle');
@@ -86,15 +83,12 @@ function showToast(message) {
         toast.classList.add('-translate-y-20','opacity-0');
     }, 3000);
 }
-///////////////////////////////////////////////
 
-// reservation
 
 
 
 var cart = {};
 
-/* ── Toggle order panel ── */
 window.toggleOrderSection = function() {
   var sec  = document.getElementById('orderSection');
   var icon = document.getElementById('toggleIcon');
@@ -113,7 +107,6 @@ window.toggleOrderSection = function() {
   }
 }
 
-/* ── Category tabs ── */
 window.showCat = function(cat) {
   ['entrees', 'plats', 'desserts'].forEach(function(c) {
     var panel = document.getElementById('cat-' + c);
@@ -146,7 +139,6 @@ document.addEventListener('click', function(e) {
   renderCart();
 });
 
-/* ── Remove / decrement item ── */
 window.removeItem = function(key) {
   if (!cart[key]) return;
   cart[key].qty--;
@@ -154,7 +146,6 @@ window.removeItem = function(key) {
   renderCart();
 }
 
-/* ── Render cart ── */
 function renderCart() {
   var keys    = Object.keys(cart);
   var summary = document.getElementById('cartSummary');
@@ -219,14 +210,12 @@ function renderCart() {
   updateSubmitBtn();
 }
 
-/* ── Remove button also via event delegation ── */
 document.addEventListener('click', function(e) {
   var btn = e.target.closest('[data-remove]');
   if (!btn) return;
   removeItem(btn.getAttribute('data-remove'));
 });
 
-/* ── Update submit button label ── */
 function updateSubmitBtn() {
   var sec = document.getElementById('orderSection');
   var btn = document.getElementById('submitBtn');

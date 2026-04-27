@@ -444,7 +444,7 @@
 
 
 <script>
-  let currentOrderId = null; // ✅ مهم هنا
+  let currentOrderId = null;
 
   function openDelete(id) {
     currentOrderId = id;
